@@ -12,7 +12,7 @@ In addition, you will need all of the following components before you go through
 
 | [Azure CLI](http://docs.microsoft.com/cli/azure/overview) | [Java 8](http://java.oracle.com/) | [Maven 3](http://maven.apache.org/) | [Git](https://github.com/) | [Docker](https://www.docker.com/) |
 
-**NOTE**: There are additional requirements in the *~/deployment/README.md* file which are required in order to setup your development environment; other required components will be installed automatically by the provisioning scripts.
+**NOTE**: There are additional requirements in the *[~/deployment/README.md](deployment/README.md)* file which are required in order to setup your development environment; other required components will be installed automatically by the provisioning scripts.
 
 ## Overview ##
 
@@ -139,7 +139,7 @@ In this basic layout, the following design decisions have been implemented:
    kubectl get svc --namespace=${TARGET_ENV} --watch
    ```
 
-1. Navigate to the *~/deployment/* folder of your local repo and run the following command:
+1. Navigate to the *~/deployment/* folder of your local repo and run the following script, which will configure various variables for your local enviroment:
 
    ```shell
    cd ../deployment
@@ -147,6 +147,14 @@ In this basic layout, the following design decisions have been implemented:
    ```
 
    **NOTE**: Microsoft is currently developing a Maven plugin to deploy to a Kubernetes cluster in Azure Container Service, so in the future you will be able to use `mvn deploy`.
+
+#### Test your data app deployment ####
+
+Run the following command to test whether your data app was successfully deployed:
+
+   ```shell
+   curl http://${DATA_API_URL}/api/v1
+   ```
 
 ### Deploy the Internet-facing web app into Linux containers in AAS ###
 
@@ -192,7 +200,7 @@ In this basic layout, the following design decisions have been implemented:
    **NOTE**: Microsoft is currently developing a Maven plugin to accomplish these steps, So in the future you will be able to use `mvn deploy`.
 
 
-### Test and diagnose your sample deployment ###
+#### Test and diagnose your sample deployment ####
 
 Test and diagnose using one of the following two methods:
 
@@ -208,77 +216,95 @@ Test and diagnose using one of the following two methods:
 
 ### OPTIONAL: Enable monitoring and diagnostics using third party services ###
 
+You can optionally enable *New Relic* and *OverOps* monitoring and diagnostics in both the web app and data app by using the steps in the following sections.
+
+#### Enable New Relic ####
+
+To enable monitoring using *New Relic*, use the following steps.
+
+- Open a console and navigate to the `~/web-app` folder in your local repo.
+
+- Configure the following environment variables:
+
+   ```shell
+   export NEW_RELIC_LICENSE_KEY=<your-new-relic-license-key>
+   export WEBAPP_NEW_RELIC_APP_NAME=<app-name-in-new-relic>
+   ```
+
+- Run the following command to build an image with New Relic and push the image to ACR; for example, if your image name is *web-app-w-new-relic*:
+
+   ```shell
+   mvn package docker:build@with-new-relic -DpushImage
+   ```
+
+- Run the following commands to deploy the web app to AAS:
+
+   ```shell
+   az webapp config container set -g ${EAST_US_GROUP} \
+      -n ${EAST_US_WEBAPP_NAME} \
+      --docker-custom-image-name ${ACR_LOGIN_SERVER}/web-app-w-new-relic \
+      --docker-registry-server-url http://${ACR_LOGIN_SERVER} \
+      --docker-registry-server-user ${ACR_USERNAME} \
+      --docker-registry-server-password ${ACR_PASSWORD}
+
+   az webapp config set -g ${EAST_US_GROUP} \
+      -n ${EAST_US_WEBAPP_NAME} \
+      --linux-fx-version "DOCKER|${ACR_LOGIN_SERVER}/web-app-w-new-relic"
+
+   az webapp restart -g ${EAST_US_GROUP} -n ${EAST_US_WEBAPP_NAME}
+   ```
+
+- Browse to your account portal in New Relic to see real-time monitoring data.
+
+#### Enable OverOps ####
+
+To enable diagnostics using *OverOps*, use the following steps.
+
+- Open a console and navigate to the `~/web-app` folder in your local repo.
+
+- Configure the following environment variables:
+
+   ```shell
+   export OVEROPSSK=<your-overops-sk>
+   ```
+
+- Run the following command to build an image with OverOps and push the image to ACR; for example, if your image name is *web-app-w-overops*:
+
+   ```shell
+   mvn package docker:build@with-overops -DpushImage
+   ```
+
+- Run the following commands to deploy the web app to AAS:
+
+   ```shell
+   az webapp config container set -g ${EAST_US_GROUP} \
+      -n ${EAST_US_WEBAPP_NAME} \
+      --docker-custom-image-name ${ACR_LOGIN_SERVER}/web-app-w-overops \
+      --docker-registry-server-url http://${ACR_LOGIN_SERVER} \
+      --docker-registry-server-user ${ACR_USERNAME} \
+      --docker-registry-server-password ${ACR_PASSWORD}
+
+   az webapp config set -g ${EAST_US_GROUP} \
+      -n ${EAST_US_WEBAPP_NAME} \
+      --linux-fx-version "DOCKER|${ACR_LOGIN_SERVER}/web-app-w-overops"
+
+   az webapp restart -g ${EAST_US_GROUP} -n ${EAST_US_WEBAPP_NAME}
+   ```
+
+- Browse to your account portal in OverOps to see real-time diagnostic data.
+
+
 <!--
+
+* **App Dynamics**
+
+> **NOTE**: Detailed notes will be included here at a later date.
+
+* **Dynatrace**
 
 > **NOTE**: Detailed notes will be included here at a later date.
 
 -->
-
-You can optionally enable *New Relic* and *OverOps* in both web app and data app.
-Enable monitoring and diagnostics using the following:
-
-
-* **New Relic**
-  - Open a console and navigate to `~/web-app`.
-  - Setup below environment variables
-    ```shell
-    export NEW_RELIC_LICENSE_KEY=<your-new-relic-license-key>
-    export WEBAPP_NEW_RELIC_APP_NAME=<app-name-in-new-relic>
-    ```
-  - Run below command to build an image with New Relic and push to ACR.
-    The image name is *web-app-w-new-relic*.
-    ```shell
-    mvn package docker:build@with-new-relic -DpushImage
-    ```
-  - Run below command to deploy web app to AAS.
-    ```shell
-    az webapp config container set -g ${EAST_US_GROUP} \
-       -n ${EAST_US_WEBAPP_NAME} \
-       --docker-custom-image-name ${ACR_LOGIN_SERVER}/web-app-w-new-relic \
-       --docker-registry-server-url http://${ACR_LOGIN_SERVER} \
-       --docker-registry-server-user ${ACR_USERNAME} \
-       --docker-registry-server-password ${ACR_PASSWORD}
-
-    az webapp config set -g ${EAST_US_GROUP} \
-                         -n ${EAST_US_WEBAPP_NAME} \
-                         --linux-fx-version "DOCKER|${ACR_LOGIN_SERVER}/web-app-w-new-relic"
-
-    az webapp restart -g ${EAST_US_GROUP} -n ${EAST_US_WEBAPP_NAME}
-    ```
-  - Go to your account portal in New Relic to see real-time monitor data.
-
-* **OverOps**
-  - Open a console and navigate to `~/web-app`.
-  - Setup below environment variables
-    ```shell
-    export OVEROPSSK=<your-overops-sk>
-    ```
-  - Run below command to build an image with OverOps and push to ACR.
-    The image name is *web-app-w-overops*.
-    ```shell
-    mvn package docker:build@with-overops -DpushImage
-    ```
-  - Run below command to deploy web app to AAS.
-    ```shell
-    az webapp config container set -g ${EAST_US_GROUP} \
-       -n ${EAST_US_WEBAPP_NAME} \
-       --docker-custom-image-name ${ACR_LOGIN_SERVER}/web-app-w-overops \
-       --docker-registry-server-url http://${ACR_LOGIN_SERVER} \
-       --docker-registry-server-user ${ACR_USERNAME} \
-       --docker-registry-server-password ${ACR_PASSWORD}
-
-    az webapp config set -g ${EAST_US_GROUP} \
-                         -n ${EAST_US_WEBAPP_NAME} \
-                         --linux-fx-version "DOCKER|${ACR_LOGIN_SERVER}/web-app-w-overops"
-
-    az webapp restart -g ${EAST_US_GROUP} -n ${EAST_US_WEBAPP_NAME}
-    ```
-  - Go to your account portal in OverOps to see real-time diagnostic data.
-
-* **App Dynamics**
-
-* **Dynatrace**
-
 
 ### Automate continuous integration and continuous deployment (CI/CD) using Jenkins ###
 
@@ -301,16 +327,25 @@ Enable monitoring and diagnostics using the following:
 
 -->
 
-1. Jenkins Dashboard: build and deploy development, test and production releases for these environments:
+1. Download the Jenkins CLI JAR from your Jenkins server; for example:
 
    ```shell
+   curl -O http://${JENKINS_URL}/jnlpJars/jenkins-cli.jar
+   ```
+
+1. Log into your Jenkins Dashboard, then build and deploy the development, test and production releases for these environments:
+
+   ```shell
+   java -jar jenkins-cli.jar -s \
+      http://${JENKINS_URL}/ login
    java -jar jenkins-cli.jar -s \
       http://${JENKINS_URL}/ \
       build 'movie-db-pipeline-for-dev' -f -v
    ```
 
    **NOTE**: Job *movie-db-pipeline-for-dev* is for `dev` environment you created in previous section.
-   If you want to have `test` and `prod` environments, please create them using below commands.
+
+   If you want to have `test` and `prod` environments, you will first need create them using below commands.
    ```shell
    cd ./deployment
    source provision.sh --env test
@@ -326,7 +361,7 @@ The steps in this section will walk you through the steps to make a simple chang
 1. Using IntelliJ change the name of the web app in the *~/web-app/src/main/resources/static/index.html* page; for example:
 
    ```html
-  <h1 class="cover-heading">Welcome to My Cool Movie DB on Azure!!!</h1>
+   <h1 class="cover-heading">Welcome to My Cool Movie DB on Azure!!!</h1>
    ```
 
 1. Using IntelliJ and Maven, build, deploy and test the web app:
@@ -356,12 +391,12 @@ The steps in this section will walk you through the steps to make a simple chang
 
    ```shell
    az appservice plan update --number-of-workers 6 \
-                             --name ${EAST_US_WEBAPP_PLAN} \
-                             --resource-group ${EAST_US_GROUP}
+      --name ${EAST_US_WEBAPP_PLAN} \
+      --resource-group ${EAST_US_GROUP}
 
    az appservice plan update --number-of-workers 6 \
-                             --name ${WEST_EUROPE_WEBAPP_PLAN} \
-                             --resource-group ${WEST_EUROPE_GROUP}
+      --name ${WEST_EUROPE_WEBAPP_PLAN} \
+      --resource-group ${WEST_EUROPE_GROUP}
    ```
 
 ## Sample Application Summary ##
@@ -394,6 +429,26 @@ In review, this sample application utilized all of the following design concepts
 - They are used for independent micro computations
 - They are used for linking two disconnected units in a workflow
 
+## Troubleshooting ##
+
+This section will document some of the issues which have been identified when trying to build and deploy this sample application; more will be added as different issues are discovered.
+
+### 'Permission Denied' error when creating the data app ###
+
+When you are attempting to build the data app, you might encounter the following error:
+
+`[ERROR] Failed to execute goal com.spotify:docker-maven-plugin:0.4.11:build (default-cli) on project data-app: Exception caught: java.util.concurrent.ExecutionException: com.spotify.docker.client.shaded.javax.ws.rs.ProcessingException: java.io.IOException: Permission denied`
+
+This error is caused when your user account does not have permissions to create the necessary socket for Docker; more details are available in [Solving Docker permission denied while trying to connect to the Docker daemon socket](https://techoverflow.net/2017/03/01/solving-docker-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket/).
+
+### 'Password Complexity' errors when provisioning the sample application ###
+
+Some of the Azure services have various password complexity requirements; as a result, you may encounter various errors related to password complexity when you are running the provision scripts. In order to avoid or resolve these issues, you should ensure that the passwords which you choose adhere to standards; for example, at the very least you should choose passwords which have a mixture of uppercase letters, lowercase letters, numbers, and punctuation.
+
 ## Contributing ##
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+## Disclaimer ##
+
+**Note**: The sample code, scripts, and documentation in this sample application are not supported under any Microsoft standard support program or service. This sample application is provided AS IS without warranty of any kind. Microsoft disclaims all implied warranties including, without limitation, any implied warranties of merchantability or of fitness for a particular purpose. The entire risk arising out of the use or performance of this sample application remains with you. In no event shall Microsoft, its authors, or anyone else involved in the creation, production, or delivery of the scripts be liable for any damages whatsoever (including, without limitation, damages for loss of business profits, business interruption, loss of business information, or other pecuniary loss) arising out of the use of or inability to use this sample application, even if Microsoft has been advised of the possibility of such damages. 

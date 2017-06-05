@@ -2,11 +2,25 @@
 
 The following instructions contain the required steps to install the necessary utilities and setup your development environment in order to run the sample application which is detailed in the parent [README](../README.md) file.
 
+The steps to setup your development environment are broken into two sections:
+
+* **[STEP 1 - Install the required developer utilities for your operating system](#step1)**
+
+* **[STEP 2 - Clone the sample application and customize it for your environment](#step2)**
+
+<a name="step1"></a>
 ## STEP 1 - Install the required developer utilities for your operating system ##
 
-### If you are using a MacOS system ###
+1. Install the **Azure CLI** by using the instructions at <https://docs.microsoft.com/en-us/cli/azure/install-azure-cli>.
 
-1. Install the **Azure CLI** using the instructions at https://docs.microsoft.com/en-us/cli/azure/install-azure-cli:
+1. Follow the instructions for your operating system in the following sections:
+
+   - [MacOS](#macos)
+   - [Linux](#linux)
+   - [Windows](#windows)
+
+<a name="macos"></a>
+### If you are using a MacOS system ###
 
 1. Install **kubectl** by running below command:
 
@@ -14,7 +28,7 @@ The following instructions contain the required steps to install the necessary u
    sudo az acs kubernetes install-cli
    ```
 
-1. Install **Homebrew** from https://brew.sh/
+1. Install **Homebrew** from <https://brew.sh/>.
 
 1. Install **jq** using Homebrew:
 
@@ -35,9 +49,29 @@ The following instructions contain the required steps to install the necessary u
    brew install maven
    ```
 
-### If you are using a Windows system ###
+<a name="linux"></a>
+### If you are using a Linux system ###
 
-1. Install the **Azure CLI** using the instructions at https://docs.microsoft.com/en-us/cli/azure/install-azure-cli.
+1. Install the **Kubernetes CLI (kubectl)** by using the instructions at <https://kubernetes.io/docs/getting-started-guides/ubuntu/>:
+
+   ```shell
+   az acs kubernetes install-cli --install-location .
+   sudo mv kubectl /usr/local/bin/kubectl
+   ```
+
+1. Install **jq** by using the instructions at <https://stedolan.github.io/jq/download/>:
+   ```shell
+   sudo apt-get install jq
+   ```
+
+1. Install **[Maven](http://maven.apache.org/)**:
+
+   ```shell
+   sudo apt-get install maven
+   ```
+
+<a name="windows"></a>
+### If you are using a Windows system ###
 
 1. Install **kubectl** by running below Azure CLI command with administrator privilege:
 
@@ -59,14 +93,15 @@ The following instructions contain the required steps to install the necessary u
    choco install jq
    ```
 
+<a name="step2"></a>
 ## STEP 2 - Clone the sample application and customize it for your environment ##
 
-1. Open https://github.com/Microsoft/movie-db-java-on-azure in a web browser and create a private fork of the sample application.
+1. Open https://github.com/Microsoft/movie-app-java-on-azure in a web browser and create a private fork of the sample application.
 
 1. Open a console window and clone your forked repo on your local system:
 
    ```shell
-   git clone https://github.com/<your-github-id>/movie-db-java-on-azure
+   git clone https://github.com/<your-github-id>/movie-app-java-on-azure
    ```
 
 1. Open the `~/deployment/config.json` in a text editor:
@@ -83,7 +118,7 @@ The following instructions contain the required steps to install the necessary u
          {
             "comment": "GitHub repository name.",
             "key": "GITHUB_REPO_NAME",
-            "value": "movie-db-java-on-azure"
+            "value": "movie-app-java-on-azure"
          }
       ],
       ```
@@ -110,18 +145,23 @@ The following instructions contain the required steps to install the necessary u
    az account set --subscription "<your-azure-subscription>"
    ```
 
-   **NOTE**: You can use either a subscription name or id when specifying which subscription to use; to obtain a list of your subscriptions, type `az account list`.
+   **NOTES**:
+
+      * You can use either a subscription name or id when specifying which subscription to use.
+      * To obtain a list of your subscriptions, type `az account list`.
 
 1. Setup environment variables for passwords.
+
    ```shell
       export MYSQL_PASSWORD=<your-mysql-admin-password>
       export JENKINS_PASSWORD=<your-jenkins-password>
    ```
 
-   `MYSQL_PASSWORD` will be used to create a MySQL database in Azure. It has to satisfy certain complexity.
-   Default MySQL admin username is `AzureUser`. You can change it in `~/deployment/config.json`.
+   **NOTES**:
 
-   `JENKINS_PASSWORD` will be used to deploy a Jenkins cluster in ACS. Jenkins admin username is `jenkins`.
+      * `MYSQL_PASSWORD` will be used to create a MySQL database in Azure, which must meet password complexity requirements; for example, you should use a mixture of uppercase letters, lowercase letters, numbers, and punctuation.
+      * The default MySQL admin username is `AzureUser`; you can change it in `~/deployment/config.json`.
+      * `JENKINS_PASSWORD` will be used to deploy a Jenkins cluster in ACS; the Jenkins admin username is `jenkins`.
 
 <!--
 
