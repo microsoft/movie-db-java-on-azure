@@ -1,0 +1,60 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "data-app-port": {
+      "type": "string",
+      "defaultValue": "80"
+    },
+    "data-app-path": {
+      "type": "string",
+      "defaultValue": "/"
+    },
+    "web-app-port": {
+      "type": "string",
+      "defaultValue": "80"
+    },
+    "web-app-path": {
+      "type": "string",
+      "defaultValue": "/"
+    }
+  },
+  "resources": [
+    {
+      "apiVersion": "2017-03-01",
+      "type": "Microsoft.Network/trafficmanagerprofiles",
+      "name": "[concat(uniqueString(resourceGroup().id), '-data-app-trafficmanager')]",
+      "location": "global",
+      "properties": {
+        "trafficRoutingMethod": "Performance",
+        "dnsConfig": {
+          "relativeName": "[concat(uniqueString(resourceGroup().id), '-data-app-trafficmanager')]",
+          "ttl": "300"
+        },
+        "monitorConfig": {
+          "protocol": "http",
+          "port": "[parameters('data-app-port')]",
+          "path": "[parameters('data-app-path')]"
+        }
+      }
+    },
+    {
+      "apiVersion": "2017-03-01",
+      "type": "Microsoft.Network/trafficmanagerprofiles",
+      "name": "[concat(uniqueString(resourceGroup().id), '-web-app-trafficmanager')]",
+      "location": "global",
+      "properties": {
+        "trafficRoutingMethod": "Performance",
+        "dnsConfig": {
+          "relativeName": "[concat(uniqueString(resourceGroup().id), '-web-app-trafficmanager')]",
+          "ttl": "300"
+        },
+        "monitorConfig": {
+          "protocol": "http",
+          "port": "[parameters('web-app-port')]",
+          "path": "[parameters('web-app-path')]"
+        }
+      }
+    }
+  ]
+}

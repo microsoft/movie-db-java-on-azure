@@ -1,0 +1,118 @@
+{
+  "repo": [
+    {
+      "comment": "GitHub account name.",
+      "key": "GITHUB_REPO_OWNER",
+      "value": "microsoft"
+    },
+    {
+      "comment": "GitHub repository name.",
+      "key": "GITHUB_REPO_NAME",
+      "value": "movie-db-java-on-azure"
+    }
+  ],
+
+  "env": [
+    {
+      "comment": "Target cloud environment.",
+      "key": "TARGET_ENV",
+      "value": "dev"
+    }
+  ],
+
+  "resourceGroup": [
+    {
+      "comment": "Resource group name for Jenkins.",
+      "key": "JENKINS_GROUP",
+      "value": "JenkinsGroup"
+    },
+    {
+      "comment": "Resource group name for non-regional resources.",
+      "key": "COMMON_GROUP",
+      "value": "CommonGroup"
+    },
+    {
+      "comment": "Resource group name for East US region.",
+      "key": "EAST_US_GROUP",
+      "value": "EastUSGroup"
+    },
+    {
+      "comment": "Resource group name for West Europe region.",
+      "key": "WEST_EUROPE_GROUP",
+      "value": "WestEuropeGroup"
+    }
+  ],
+
+  "location": [
+    {
+      "comment": "East US region.",
+      "key": "EAST_US",
+      "value": "eastus"
+    },
+    {
+      "comment": "West Europe region.",
+      "key": "WEST_EUROPE",
+      "value": "westeurope"
+    }
+  ],
+
+  "mySql": [
+    {
+      "comment": "Admin username for MySQL server.",
+      "key": "MYSQL_ADMIN_USERNAME",
+      "value": "AzureUser"
+    }
+  ],
+
+  "webApp": [
+    {
+      "comment": "Port number that web app listens at.",
+      "key": "WEB_APP_CONTAINER_PORT",
+      "value": "8080"
+    },
+    {
+      "comment": "Original image container name in Azure storage.",
+      "key": "ORIGINAL_IMAGE_CONTAINER",
+      "value": "images-original"
+    },
+    {
+      "comment": "Thumbnail image container name in Azure storage.",
+      "key": "THUMBNAIL_IMAGE_CONTAINER",
+      "value": "images-thumbnail"
+    }
+  ],
+
+  "dataApp": [
+    {
+      "comment": "Port number that data app listens at.",
+      "key": "DATA_APP_CONTAINER_PORT",
+      "value": "8090"
+    }
+  ],
+
+  "misc": [
+    {
+      "comment": "Azure container service name.",
+      "key": "ACS_NAME",
+      "value": "acs"
+    }
+  ],
+
+  "optional": [
+    {
+      "comment": "Optional facebook app id. Should be paired with FACEBOOK_APP_SECRET.",
+      "key": "FACEBOOK_APP_ID",
+      "value": ""
+    },
+    {
+      "comment": "Optional facebook app secret. Should be paired with FACEBOOK_APP_ID.",
+      "key": "FACEBOOK_APP_SECRET",
+      "value": ""
+    },
+    {
+      "comment": "Optional resource group suffix to avoid naming conflict.",
+      "key": "GROUP_SUFFIX",
+      "value": ""
+    }
+  ]
+}

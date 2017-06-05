@@ -1,0 +1,8 @@
+CREATE TABLE movies (
+  id INTEGER NOT NULL,
+  name VARCHAR(60) NOT NULL,
+  rating FLOAT DEFAULT NULL,
+  description TEXT NOT NULL,
+  image_uri TEXT DEFAULT NULL,
+  PRIMARY KEY (id)
+);

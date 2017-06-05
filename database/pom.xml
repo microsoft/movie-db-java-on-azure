@@ -1,0 +1,89 @@
+<!--
+ Copyright (c) Microsoft Corporation. All rights reserved.
+ Licensed under the MIT License. See License.txt in the project root for
+ license information.
+
+ Run "SET MYSQL_SERVER_ENDPOINT=jdbc:mysql://localhost:3306/"
+ Run "SET MYSQL_USERNAME=root"
+ Run "SET MYSQL_PASSWORD=YourSecretPassword"
+ Run "mvn sql:execute" to populate the database.
+-->
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.microsoft.azure.java.samples.moviedb</groupId>
+    <artifactId>database-deployment</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+
+    <parent>
+        <groupId>com.microsoft.azure.java.samples.moviedb</groupId>
+        <artifactId>movie-db-java-on-azure</artifactId>
+        <version>0.1.0-SNAPSHOT</version>
+    </parent>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <version>1.5</version>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>6.0.6</version>
+                    </dependency>
+                </dependencies>
+
+                <configuration>
+                    <driver>com.mysql.cj.jdbc.Driver</driver>
+                    <url>${env.MYSQL_SERVER_ENDPOINT}</url>
+                    <username>${env.MYSQL_USERNAME}</username>
+                    <password>${env.MYSQL_PASSWORD}</password>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <autocommit>true</autocommit>
+                            <srcFiles>
+                                <srcFile>./schema/DDL.sql</srcFile>
+                                <srcFile>./data/data.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>create-database</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <autocommit>true</autocommit>
+                            <srcFiles>
+                                <srcFile>./schema/DDL.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>populate-data</id>
+                        <goals>
+                            <goal>execute</goal>
+                        </goals>
+                        <configuration>
+                            <autocommit>true</autocommit>
+                            <srcFiles>
+                                <srcFile>./data/data.sql</srcFile>
+                            </srcFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

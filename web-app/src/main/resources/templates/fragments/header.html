@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<head>
+    <meta charset="UTF-8"/>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous"/>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+          crossorigin="anonymous"/>
+</head>
+<body>
+<nav th:if="${@environment.getProperty('facebook.client.client-id')} != ''" class="navbar navbar-default" data-th-fragment="header">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Movie DB on Azure</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li sec:authorize="isAuthenticated()">
+                    <p class="navbar-text">Signed in as <span th:text="${userInfo.getDisplayName()}">username</span></p>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <form action="/logout" th:action="@{/logout}" method="post">
+                        <input class="btn btn-primary btn-small navbar-btn" type="submit" value="Logout"/>
+                    </form>
+                </li>
+                <li sec:authorize="isAnonymous()">
+                    <div class="btn-nav"><a class="btn btn-primary btn-small navbar-btn" href="/login">Login with Facebook</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

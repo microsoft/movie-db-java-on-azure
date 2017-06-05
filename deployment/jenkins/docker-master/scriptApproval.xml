@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<scriptApproval plugin="script-security@1.27">
+    <approvedScriptHashes>
+    </approvedScriptHashes>
+    <approvedSignatures>
+        <string>method hudson.plugins.git.BranchSpec getName</string>
+        <string>method hudson.plugins.git.GitSCM getBranches</string>
+        <string>new groovy.json.JsonSlurperClassic</string>
+        <string>method groovy.json.JsonSlurperClassic parseText java.lang.String</string>
+    </approvedSignatures>
+    <aclApprovedSignatures/>
+    <approvedClasspathEntries/>
+    <pendingScripts/>
+    <pendingSignatures/>
+    <pendingClasspathEntries/>
+</scriptApproval>

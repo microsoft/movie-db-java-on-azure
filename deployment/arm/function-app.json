@@ -1,0 +1,171 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "inputContainerName": {
+      "type": "string",
+      "defaultValue": "images-original",
+      "metadata": {
+        "description": "Name of the input blob container for function app."
+      }
+    },
+    "outputContainerName": {
+      "type": "string",
+      "defaultValue": "images-thumbnail",
+      "metadata": {
+        "description": "Name of the output blob container for function app."
+      }
+    },
+    "storageType": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_ZRS",
+        "Standard_GRS"
+      ],
+      "defaultValue": "Standard_LRS",
+      "metadata": {
+        "description": "Type of the storage account that will store data."
+      }
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]",
+    "storageVersion": "2015-06-15",
+    "appServiceApiVersion": "2015-08-01",
+    "functionStorageName": "[concat(uniqueString(resourceGroup().id), 'func')]",
+    "functionAppPlanName": "[concat(uniqueString(resourceGroup().id), '-func-app-plan')]",
+    "functionAppName": "[concat(uniqueString(resourceGroup().id), '-func-app')]",
+    "resizeImageFunction": "ResizeImage",
+    "imageStorageName": "[concat(uniqueString(resourceGroup().id), 'image')]",
+    "repoUrl": "https://github.com/microsoft/movie-db-java-on-azure/",
+    "branch": "master"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('functionStorageName')]",
+      "apiVersion": "[variables('storageVersion')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "accountType": "[parameters('storageType')]"
+      },
+      "tags": {
+        "displayName": "Function App Storage"
+      }
+    },
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('imageStorageName')]",
+      "apiVersion": "[variables('storageVersion')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "accountType": "[parameters('storageType')]"
+      },
+      "tags": {
+        "displayName": "Image Storage"
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('functionAppPlanName')]",
+      "kind": "app",
+      "apiVersion": "[variables('appServiceApiVersion')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "B1",
+        "tier": "Basic",
+        "size": "B1",
+        "family": "B",
+        "capacity": 1
+      },
+      "properties": {
+        "name": "[variables('functionAppPlanName')]",
+        "numberOfWorkers": 1
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('functionAppName')]",
+      "kind": "functionapp",
+      "apiVersion": "[variables('appServiceApiVersion')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "name": "[variables('functionAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('imageStorageName'))]",
+        "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]"
+      ],
+      "resources": [
+        {
+          "type": "config",
+          "name": "appsettings",
+          "apiVersion": "[variables('appServiceApiVersion')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+          ],
+          "properties": {
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), variables('storageVersion')).key1,';')]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), variables('storageVersion')).key1,';')]",
+            "FUNCTIONS_EXTENSION_VERSION": "latest",
+            "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0",
+            "STORAGE_CONNECTION_STRING": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('imageStorageName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('imageStorageName')), variables('storageVersion')).key1,';')]"
+          }
+        },
+        {
+          "type": "sourcecontrols",
+          "name": "web",
+          "apiVersion": "[variables('appServiceApiVersion')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites/', variables('functionAppName'))]",
+            "[resourceId('Microsoft.Web/sites/config', variables('functionAppName'), 'appsettings')]"
+          ],
+          "properties": {
+            "RepoUrl": "[variables('repoUrl')]",
+            "branch": "[variables('branch')]",
+            "IsManualIntegration": true
+          }
+        },
+        {
+          "type": "functions",
+          "name": "[variables('resizeImageFunction')]",
+          "apiVersion": "[variables('appServiceApiVersion')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]",
+            "[resourceId('Microsoft.Web/Sites/config', variables('functionAppName'), 'appsettings')]",
+            "[resourceId('Microsoft.Web/Sites/sourcecontrols', variables('functionAppName'), 'web')]"
+          ],
+          "properties": {
+            "config": {
+              "bindings": [
+                {
+                  "type": "blobTrigger",
+                  "name": "inputBlob",
+                  "dataType": "binary",
+                  "path": "[concat(parameters('inputContainerName'), '/{name}')]",
+                  "connection": "STORAGE_CONNECTION_STRING",
+                  "direction": "in"
+                },
+                {
+                  "type": "blob",
+                  "name": "outputBlob",
+                  "path": "[concat(parameters('outputContainerName'), '/{name}')]",
+                  "connection": "STORAGE_CONNECTION_STRING",
+                  "direction": "out"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "tags": {
+        "displayName": "Function App"
+      }
+    }
+  ],
+  "outputs": {}
+}

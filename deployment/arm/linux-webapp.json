@@ -1,0 +1,57 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "type": "string",
+      "defaultValue": "[concat(uniqueString(resourceGroup().id), '-web-app')]"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "West US"
+    }
+  },
+  "variables": {
+    "linuxAppPlanName": "[concat(uniqueString(resourceGroup().id), '-linux-app-plan')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/sites",
+      "kind": "app",
+      "name": "[parameters('name')]",
+      "apiVersion": "2016-03-01",
+      "location": "[parameters('location')]",
+      "properties": {
+        "name": "[parameters('name')]",
+        "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourcegroups/', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('linuxAppPlanName'))]",
+        "hostingEnvironment": ""
+      },
+      "tags": {
+        "[concat('hidden-related:', '/subscriptions/', subscription().subscriptionId, '/resourcegroups/', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('linuxAppPlanName'))]": "empty"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/', variables('linuxAppPlanName'))]"
+      ]
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "kind": "linux",
+      "name": "[variables('linuxAppPlanName')]",
+      "apiVersion": "2016-09-01",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 1
+      },
+      "location": "[parameters('location')]",
+      "properties": {
+        "name": "[variables('linuxAppPlanName')]",
+        "numberOfWorkers": "1",
+        "workerSizeId": "0",
+        "reserved": true
+      }
+    }
+  ]
+}

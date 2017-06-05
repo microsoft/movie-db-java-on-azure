@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Top Rated Movies</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous"/>
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+          crossorigin="anonymous"/>
+</head>
+<body>
+<div class="container">
+    <div th:replace="fragments/header :: header">...</div>
+
+    <div class="page-header">
+        <h1 class="text-center">Top Rated Movies</h1>
+    </div>
+    <div>
+        <div>
+            <table class="table table-hover">
+                <tr>
+                    <th></th>
+                    <th>Rank &#38; Title</th>
+                    <th>Rating</th>
+                </tr>
+                <tr th:each="movie : ${movies}">
+                    <td th:if="${movie.thumbnailFullPathUri}">
+                        <object
+                                th:data="${movie.thumbnailFullPathUri}" type="image/png">
+                            <img src="../thumbnail.png"/>
+                        </object>
+                    </td>
+                    <td th:unless="${movie.thumbnailFullPathUri}"><img
+                            src="../thumbnail.png"/></td>
+                    <td><span><a th:text="${movie.id + '. '}"></a></span><span><a
+                            th:href="@{'/movies/' + ${movie.id}}" th:text="${movie.name}"></a></span></td>
+                    <td th:text="${movie.rating}">Rating ...</td>
+                </tr>
+            </table>
+        </div>
+        <div class="text-center">
+            <a class="btn btn-success" th:href="${prev}" th:if="${hasprev}">Prev</a>
+            <a th:text="${number}"></a> <a class="btn btn-success"
+                                           th:href="${next}" th:if="${hasnext}">Next</a>
+        </div>
+    </div>
+</div>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.12.4.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
