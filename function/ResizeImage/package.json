@@ -1,0 +1,10 @@
+{
+  "name": "resize-image",
+  "version": "0.0.1",
+  "private": true,
+  "main": "index.js",
+  "author": "Microsoft Corp.",
+  "dependencies": {
+    "jimp": "0.2.27"
+  }
+}

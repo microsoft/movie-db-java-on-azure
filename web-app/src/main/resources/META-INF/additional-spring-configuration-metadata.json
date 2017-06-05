@@ -1,0 +1,24 @@
+{
+  "properties": [
+    {
+      "name": "moviedb.webapp.dataAppUri",
+      "type": "java.lang.String",
+      "description": "The api endpoint for data-app."
+    },
+    {
+      "name": "moviedb.webapp.storageconnectionstring",
+      "type": "java.lang.String",
+      "description": "Storage connection string for storing uploaded images."
+    },
+    {
+      "name": "moviedb.webapp.originalImageContainer",
+      "type": "java.lang.String",
+      "description": "Container name for original images."
+    },
+    {
+      "name": "moviedb.webapp.thumbnailImageContainer",
+      "type": "java.lang.String",
+      "description": "Container name for thumbnail images."
+    }
+  ]
+}

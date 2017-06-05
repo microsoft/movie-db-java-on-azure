@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title th:text="${movie.name}">Movie</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous"/>
+
+    <!-- Optional theme -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+          integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
+          crossorigin="anonymous"/>
+</head>
+
+<body>
+<div class="container">
+    <div th:replace="fragments/header :: header">...</div>
+
+    <div class="jumbotron">
+        <script th:inline="javascript">
+            function updateMovieDescription() {
+                document.getElementById('description').setAttribute('contenteditable', 'false');
+
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("POST", "/movies/" + [[${movie.id}]], true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+                var token = $("meta[name='_csrf']").attr("content");
+                var header = $("meta[name='_csrf_header']").attr("content");
+                xhttp.setRequestHeader(header, token);
+
+                xhttp.send("description=" + document.getElementById('description').innerHTML);
+            }
+        </script>
+
+        <h1 th:text="${movie.name}"></h1>
+        <p th:if="${userInfo.getIsAllowedToUpdateMovieDB()}" id="description" th:text="${movie.description}"
+           onblur="updateMovieDescription()"
+           ondblclick="document.getElementById('description').setAttribute('contenteditable', 'true');"></p>
+        <p th:unless="${userInfo.getIsAllowedToUpdateMovieDB()}" id="description" th:text="${movie.description}"></p>
+    </div>
+    <div th:if="${movie.imageFullPathUri}">
+        <image class="img-responsive" th:src="${movie.imageFullPathUri}"/>
+    </div>
+    <div th:unless="${movie.imageFullPathUri}">
+        <image class="img-responsive" src="../original.png"/>
+    </div>
+    <div th:if="${userInfo.getIsAllowedToUpdateMovieDB()}">
+        <script>
+            function validateImageInput() {
+                var fileName = document.getElementById('file').files[0].name;
+                document.getElementById('submit').disabled = !fileName.match(/.(jpg|jpeg|png|gif)$/i);
+                document.getElementById('path').value = fileName;
+            }
+        </script>
+        <form method="POST" enctype="multipart/form-data" action="/upload">
+            <input type="text" th:value="${movie.id}" style="display: none"
+                   name="id"/>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <table>
+                <tr>
+                    <td><input type="button" value="Choose New Image"
+                               onclick="document.getElementById('file').click();"
+                               class="btn btn-success"/></td>
+                    <td><input type="file" name="file" style="display: none;"
+                               id="file" accept="image/*" onchange="validateImageInput();"/>
+                    </td>
+                    <td><input type="text" id="path" value="New Image..."
+                               readonly="readonly"/></td>
+                    <td><input type="submit" id="submit" value="Update"
+                               class="btn btn-success" disabled="true"/></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-1.12.4.min.js"
+        crossorigin="anonymous"></script>
+<script
+        src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

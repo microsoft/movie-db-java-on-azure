@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "administratorLogin": {
+      "type": "string"
+    },
+    "administratorLoginPassword": {
+      "type": "securestring"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "westus"
+    }
+  },
+  "variables": {
+    "serverName": "[concat(uniqueString(resourceGroup().id), '-database')]",
+    "mysqlApiVersion": "2016-02-01-privatepreview"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DBforMySQL/servers",
+      "apiVersion": "[variables('mysqlApiVersion')]",
+      "name": "[variables('serverName')]",
+      "location": "[parameters('location')]",
+      "kind": "",
+      "properties": {
+        "version": "5.6",
+        "administratorLogin": "[parameters('administratorLogin')]",
+        "administratorLoginPassword": "[parameters('administratorLoginPassword')]",
+        "storageMB": 51200,
+        "sslEnforcement": "Disabled"
+      },
+      "sku": {
+        "name": "MYSQLS2M50",
+        "tier": "Basic",
+        "capacity": 50,
+        "size": 51200,
+        "family": "SkuFamily"
+      },
+      "resources": [
+        {
+          "apiVersion": "[variables('mysqlApiVersion')]",
+          "type": "firewallRules",
+          "name": "all",
+          "dependsOn": [
+            "[resourceId('Microsoft.DBforMySQL/servers', variables('serverName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "255.255.255.255"
+          }
+        }
+      ]
+    }
+  ]
+}

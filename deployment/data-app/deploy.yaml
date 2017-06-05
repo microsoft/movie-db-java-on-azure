@@ -1,0 +1,82 @@
+---
+apiVersion: "v1"
+kind: "List"
+items:
+
+  - apiVersion: "v1"
+    kind: "Namespace"
+    metadata:
+      name: ${TARGET_ENV}
+      labels:
+        name: ${TARGET_ENV}
+
+  - apiVersion: "extensions/v1beta1"
+    kind: "Deployment"
+    metadata:
+      name: "data-app"
+      namespace: ${TARGET_ENV}
+      labels:
+        name: "data-app"
+    spec:
+      replicas: 1
+      template:
+        metadata:
+          labels:
+            name: "data-app"
+        spec:
+          containers:
+            - name: "data-app"
+              image: "${ACR_LOGIN_SERVER}/data-app:latest"
+              ports:
+                - containerPort: ${DATA_APP_CONTAINER_PORT}
+              resources:
+                limits:
+                  cpu: 1
+                  memory: 4Gi
+                requests:
+                  cpu: 1
+                  memory: 2Gi
+              env:
+                - name: MYSQL_USERNAME
+                  valueFrom:
+                    secretKeyRef:
+                      name: my-secrets
+                      key: mysqlUsername
+                - name: MYSQL_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: my-secrets
+                      key: mysqlPassword
+                - name: MYSQL_ENDPOINT
+                  valueFrom:
+                    secretKeyRef:
+                      name: my-secrets
+                      key: mysqlEndpoint
+                - name: DATA_APP_CONTAINER_PORT
+                  value: "${DATA_APP_CONTAINER_PORT}"
+              livenessProbe:
+                httpGet:
+                  path: /api/v1
+                  port: ${DATA_APP_CONTAINER_PORT}
+                initialDelaySeconds: 60
+                timeoutSeconds: 5
+          imagePullSecrets:
+            - name: ${ACR_LOGIN_SERVER}
+          securityContext:
+            fsGroup: 1000
+
+  - apiVersion: "v1"
+    kind: "Service"
+    metadata:
+      name: "data-app"
+      namespace: ${TARGET_ENV}
+    spec:
+      type: "LoadBalancer"
+      selector:
+        name: "data-app"
+      ports:
+        -
+          name: "http"
+          port: 80
+          targetPort: ${DATA_APP_CONTAINER_PORT}
+          protocol: "TCP"
