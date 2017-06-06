@@ -519,11 +519,13 @@ function create_secrets_in_jenkins_kubernetes() {
 ##############################################################################
 function check_jenkins_readiness()
 {
-  jenkins_ip=$(kubectl get svc -o jsonpath={.items[*].status.loadBalancer.ingress[0].ip})
-  while [ -z "${jenkins_ip}" ]
+  while [ 1 ]
   do
-    sleep 5
     jenkins_ip=$(kubectl get svc -o jsonpath={.items[*].status.loadBalancer.ingress[0].ip})
+    if [ -n "${jenkins_ip}" ]; then
+      break;
+    fi
+    sleep 5
   done
   echo Jenkins is ready at http://${jenkins_ip}/.
 }
