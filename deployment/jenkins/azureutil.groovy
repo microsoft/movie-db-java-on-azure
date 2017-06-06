@@ -142,16 +142,25 @@ def deployDataApp(String targetEnv, String resGroup) {
         export TARGET_ENV=${targetEnv}
         envsubst < ./deployment/data-app/deploy.yaml | kubectl apply --namespace=${targetEnv} -f -
      
+        # Check whether there is any redundant IP address
+        ip_count=\$(az network public-ip list -g ${resGroup} --query "[?tags.service=='${targetEnv}/data-app'] | length([*])")
+        if [ \${ip_count} -gt 1 ]; then
+          echo Only one IP address is allowed for data-app. More than one IP addresses are found.
+          echo Please check whether there is any unused resource.
+          exit 1
+        fi
+        
         # Wait until external IP is created for data app
-        data_app_ip=\$(kubectl get svc data-app -o jsonpath={.status.loadBalancer.ingress[0].ip} --ignore-not-found --namespace=${targetEnv})
-        while [ -z "\${data_app_ip}" ]
+        while [ 1 ]
         do
+          ip_name=\$(az network public-ip list -g ${resGroup} --query "[?tags.service=='${targetEnv}/data-app'] | [0].name" | tr -d '"')
+          if [ -n "\${ip_name}" ]; then
+            break
+          fi
           sleep 5
-          data_app_ip=\$(kubectl get svc data-app -o jsonpath={.status.loadBalancer.ingress[0].ip} --ignore-not-found --namespace=${targetEnv})
         done
      
         # Update DNS name of public ip resource for data app
-        ip_name=\$(az network public-ip list -g ${resGroup} --query "[?ipAddress=='\${data_app_ip}']" | python -c "import sys, json; print json.load(sys.stdin)[0]['name']")
         ip_resource_guid=\$(az network public-ip show -n \${ip_name} -g ${resGroup} --query resourceGuid | tr -d '"')
         az network public-ip update -g ${resGroup} -n \${ip_name} --dns-name data-app-\${ip_resource_guid} --allocation-method Static
      
