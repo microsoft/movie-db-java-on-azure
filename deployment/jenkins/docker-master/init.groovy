@@ -120,7 +120,7 @@ void configureKubernetes() {
     def envVars = new ArrayList<PodEnvVar>()
     envVars.add(new PodEnvVar('GROUP_SUFFIX', "${env.GROUP_SUFFIX}"))
 
-    def pod = new PodTemplate('jnlp', 'kevinzha/jenkins-k8s-s', volumes)
+    def pod = new PodTemplate('jnlp', 'microsoft/java-on-azure-jenkins-slave', volumes)
     pod.setEnvVars(envVars)
     pod.setLabel('jenkins-slave-docker')
     pod.setRemoteFs('/home/jenkins')

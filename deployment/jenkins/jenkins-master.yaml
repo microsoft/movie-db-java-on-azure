@@ -38,7 +38,7 @@ items:
         spec:
           containers:
             - name: "jenkins"
-              image: "kevinzha/jenkins-k8s-m"
+              image: "microsoft/java-on-azure-jenkins-master"
               ports:
                 - containerPort: 8080
                 - containerPort: 50000
