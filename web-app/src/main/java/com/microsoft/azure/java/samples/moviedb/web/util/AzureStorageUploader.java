@@ -15,6 +15,7 @@ import com.microsoft.azure.storage.blob.CloudBlobContainer;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,27 +30,25 @@ import java.security.InvalidKeyException;
 public class AzureStorageUploader {
     private static final Logger logger = LoggerFactory.getLogger(AzureStorageUploader.class);
 
-    private final String storageConnectionString;
     private final String originalImageContainer;
     private final String thumbnailImageContainer;
+
+    @Autowired
+    private CloudStorageAccount storageAccount;
 
     private String azureStorageBaseUri;
 
     /**
      * Constructor that accepts settings from property file.
      *
-     * @param storageConnectionString Azure storage connection string
      * @param originalImageContainer  storage container name for original images
      * @param thumbnailImageContainer storage container name for thumbnail images
      */
-    public AzureStorageUploader(@Value("${moviedb.webapp.storageconnectionstring}") String storageConnectionString,
-                                @Value("${moviedb.webapp.originalImageContainer}") String originalImageContainer,
+    public AzureStorageUploader(@Value("${moviedb.webapp.originalImageContainer}") String originalImageContainer,
                                 @Value("${moviedb.webapp.thumbnailImageContainer}") String thumbnailImageContainer) {
-        logger.debug(storageConnectionString);
         logger.debug(originalImageContainer);
         logger.debug(thumbnailImageContainer);
 
-        this.storageConnectionString = storageConnectionString;
         this.originalImageContainer = (originalImageContainer == null || originalImageContainer.isEmpty())
                 ? "images-original" : originalImageContainer;
         this.thumbnailImageContainer = (thumbnailImageContainer == null || thumbnailImageContainer.isEmpty())
@@ -81,17 +80,7 @@ public class AzureStorageUploader {
      */
     public String getAzureStorageBaseUri() {
         if (azureStorageBaseUri == null) {
-            CloudStorageAccount storageAccount;
-            try {
-                storageAccount = CloudStorageAccount.parse(this.storageConnectionString);
-                azureStorageBaseUri = "https://" + storageAccount.createCloudBlobClient().getEndpoint().getHost();
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
-                logger.error("InvalidKeyException: " + e.getMessage());
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-                logger.error("URISyntaxException: " + e.getMessage());
-            }
+            azureStorageBaseUri = "https://" + storageAccount.createCloudBlobClient().getEndpoint().getHost();
         }
 
         return azureStorageBaseUri;
@@ -108,7 +97,6 @@ public class AzureStorageUploader {
         String uri = null;
 
         try {
-            CloudStorageAccount storageAccount = CloudStorageAccount.parse(this.storageConnectionString);
             CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
 
             setupContainer(blobClient, this.thumbnailImageContainer);
