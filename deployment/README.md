@@ -9,11 +9,7 @@ The steps to setup your development environment are broken into two sections:
 * **[STEP 2 - Clone the sample application and customize it for your environment](#step2)**
 
 <a name="step1"></a>
-## STEP 1 - Install the required developer utilities for your operating system ##
-
-1. Install the **Azure CLI** by using the instructions at <https://docs.microsoft.com/en-us/cli/azure/install-azure-cli>.
-
-1. Follow the instructions for your operating system in the following sections:
+## STEP 1 - Install the required developer utilities for your operating system by following the instructions in below sections:
 
    - [MacOS](#macos)
    - [Linux](#linux)
@@ -21,6 +17,8 @@ The steps to setup your development environment are broken into two sections:
 
 <a name="macos"></a>
 ### If you are using a MacOS system ###
+
+1. Install the **Azure CLI** by using the instructions at <https://docs.microsoft.com/en-us/cli/azure/install-azure-cli>.
 
 1. Install **kubectl** by running below command:
 
@@ -52,6 +50,8 @@ The steps to setup your development environment are broken into two sections:
 <a name="linux"></a>
 ### If you are using a Linux system ###
 
+1. Install the **Azure CLI** by using the instructions at <https://docs.microsoft.com/en-us/cli/azure/install-azure-cli>.
+
 1. Install the **Kubernetes CLI (kubectl)** by using the instructions at <https://kubernetes.io/docs/getting-started-guides/ubuntu/>:
 
    ```shell
@@ -73,6 +73,14 @@ The steps to setup your development environment are broken into two sections:
 <a name="windows"></a>
 ### If you are using a Windows system ###
 
+1. Install **python** (preferbaly 3.6) and **pip**.
+
+1. Install **Azure CLI** by running below command:
+
+   ```shell
+   pip install azure-cli
+   ```
+   
 1. Install **kubectl** by running below Azure CLI command with administrator privilege:
 
    ```shell
