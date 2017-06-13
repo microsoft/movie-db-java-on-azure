@@ -9,11 +9,7 @@ The steps to setup your development environment are broken into two sections:
 * **[STEP 2 - Clone the sample application and customize it for your environment](#step2)**
 
 <a name="step1"></a>
-## STEP 1 - Install the required developer utilities for your operating system ##
-
-1. Install the **Azure CLI** by using the instructions at <https://docs.microsoft.com/en-us/cli/azure/install-azure-cli>.
-
-1. Follow the instructions for your operating system in the following sections:
+## STEP 1 - Install the required developer utilities for your operating system by following the instructions in below sections:
 
    - [MacOS](#macos)
    - [Linux](#linux)
@@ -21,6 +17,8 @@ The steps to setup your development environment are broken into two sections:
 
 <a name="macos"></a>
 ### If you are using a MacOS system ###
+
+1. Install the **Azure CLI** by using the instructions at <https://docs.microsoft.com/en-us/cli/azure/install-azure-cli>.
 
 1. Install **kubectl** by running below command:
 
@@ -52,6 +50,8 @@ The steps to setup your development environment are broken into two sections:
 <a name="linux"></a>
 ### If you are using a Linux system ###
 
+1. Install the **Azure CLI** by using the instructions at <https://docs.microsoft.com/en-us/cli/azure/install-azure-cli>.
+
 1. Install the **Kubernetes CLI (kubectl)** by using the instructions at <https://kubernetes.io/docs/getting-started-guides/ubuntu/>:
 
    ```shell
@@ -72,6 +72,17 @@ The steps to setup your development environment are broken into two sections:
 
 <a name="windows"></a>
 ### If you are using a Windows system ###
+
+1. Install **[python](https://www.python.org/downloads/windows/)** (preferably 3.6). In the python setup wizard, check `pip` during the `Optional Features` step.
+
+1. Install **Azure CLI** by running below command:
+
+   ```shell
+   pip install azure-cli
+   ```
+   **NOTES**:
+      * We run Azure resource provisioning script in Git Bash. To smoothly run Azure CLI commands in Git Bash, Azure CLI has to be installed via pip. 
+      * The Azure CLI installed via MSI insatller doesn't work well in Git Bash. 
 
 1. Install **kubectl** by running below Azure CLI command with administrator privilege:
 
