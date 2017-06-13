@@ -73,14 +73,17 @@ The steps to setup your development environment are broken into two sections:
 <a name="windows"></a>
 ### If you are using a Windows system ###
 
-1. Install **python** (preferbaly 3.6) and **pip**.
+1. Install **[python](https://www.python.org/downloads/windows/)** (preferably 3.6). In the python setup wizard, check `pip` during the `Optional Features` step.
 
 1. Install **Azure CLI** by running below command:
 
    ```shell
    pip install azure-cli
    ```
-   
+   **NOTES**:
+      * We run Azure resource provisioning script in Git Bash. To smoothly run Azure CLI commands in Git Bash, Azure CLI has to be installed via pip. 
+      * The Azure CLI installed via MSI insatller doesn't work well in Git Bash. 
+
 1. Install **kubectl** by running below Azure CLI command with administrator privilege:
 
    ```shell
