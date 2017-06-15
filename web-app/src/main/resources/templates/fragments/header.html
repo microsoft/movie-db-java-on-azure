@@ -28,7 +28,7 @@
                     </form>
                 </li>
                 <li sec:authorize="isAnonymous()">
-                    <div class="btn-nav"><a class="btn btn-primary btn-small navbar-btn" href="/login">Login with Facebook</a>
+                    <div class="btn-nav"><a th:with="continueUrl=${T(java.net.URLEncoder).encode(#httpServletRequest.requestURI, 'UTF-8')}" class="btn btn-primary btn-small navbar-btn" th:href="${'/login?continue=' + continueUrl}">Login with Facebook</a>
                     </div>
                 </li>
             </ul>
