@@ -62,9 +62,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UserInfoTokenServices tokenServices = new UserInfoTokenServices(facebookResource().getUserInfoUri(), facebook().getClientId());
         tokenServices.setRestTemplate(facebookTemplate);
         facebookFilter.setTokenServices(tokenServices);
-        //TODO: this seems to break redirect to the referrer from facebook.com
         SavedRequestAwareAuthenticationSuccessHandler authenticationSuccessHandler = new SavedRequestAwareAuthenticationSuccessHandler();
         authenticationSuccessHandler.setUseReferer(true);
+        authenticationSuccessHandler.setTargetUrlParameter("continue");
         facebookFilter.setAuthenticationSuccessHandler(authenticationSuccessHandler);
         return facebookFilter;
     }
