@@ -17,13 +17,13 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
 /**
  * Wrapper for sending rest api request to data app with redis cache support.
  */
-@Component
+@Repository
 public class MovieRepository {
     private static final String PATH_MOVIE_SEARCH_BY_ID = "/movies/";
     private static final String PATH_MOVIE_SEARCH_BY_PAGE = "/movies?page=";
@@ -64,8 +64,7 @@ public class MovieRepository {
         try {
             return this.restTemplate.getForObject(requestPath, MoviesResponse.class);
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Error requesting movies: " + e.getMessage());
+            logger.error("Error requesting movies: ", e);
         }
         return null;
     }
@@ -83,8 +82,7 @@ public class MovieRepository {
         try {
             return this.restTemplate.getForObject(requestPath, Movie.class);
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Error requesting movie: " + e.getMessage());
+            logger.error("Error requesting movie: ", e);
         }
         return null;
     }
@@ -100,8 +98,7 @@ public class MovieRepository {
         try {
             this.restTemplate.patchForObject("/movies/" + id, new HttpEntity<>(movie), Void.class);
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Error patching movie: " + e.getMessage());
+            logger.error("Error patching movie: ", e);
         }
     }
 }
