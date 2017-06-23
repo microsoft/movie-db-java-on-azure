@@ -26,7 +26,7 @@ public class RepositoryAspect {
             logger.error(e.getMessage(), e);
         } finally {
             long elapsedTime = System.currentTimeMillis() - start;
-            logger.debug(pjp.getTarget() + "." + pjp.getSignature() + ": Execution time: " + elapsedTime + " ms. (" + elapsedTime / 60000 + " minutes)");
+            logger.info(pjp.getTarget() + "---" + pjp.getSignature() + "---" + elapsedTime + " ms");
         }
         return null;
     }
