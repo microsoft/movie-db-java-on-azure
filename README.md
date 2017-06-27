@@ -306,37 +306,63 @@ To enable diagnostics using *OverOps*, use the following steps.
 
 -->
 
-### Enable ELK for Data app in Kubernetes ###
-1. `git clone https://github.com/Microsoft/elk-acs-kubernetes` or `git clone git@github.com:Microsoft/elk-acs-kubernetes.git)`
+#### Enable ELK for Data app in Kubernetes ####
+1. Clone [elk-acs-kubernetes](https://github.com/Microsoft/elk-acs-kubernetes) repo.
 2. Install Helm. [Quickstart Guide](https://github.com/kubernetes/helm/blob/master/docs/quickstart.md)
-3. Take a note of GROUP_SUFFIX you set previously in `deployment/config.json` e.g. "123456". We'll deploy ELK cluster on Kubernetes in two resource groups e.g. "devEastUSGroup123456" and "devWestEuropeGroup123456".
-4. `az acr list` to get the `loginserver` and `name` of Azure Container Registry
-5. `az acr credential show --name <registry_name>` to get the password of the ACR
-6. Change the directory to `~/docker/` and open `push_images.sh` then replace the following fields:
+3. Take a note of GROUP_SUFFIX you set previously in `deployment/config.json` e.g. "123456". Data app is deployed to two Kubernetes clusters in resource groups e.g. `devEastUSGroup123456`, `devWestEuropeGroup123456`. So does ELK cluster.
+4. Run the following command to get the `loginserver` and `name` of your Azure Container Registry(ACR) instance.
 
-   a. registry_server with loginserver
+   ```shell
+   az acr list
+   ```
+5. Run the following command to get the password of your ACR instance.
+   ```shell
+   az acr credential show --name <registry_name>
+   ```
+6. Update the following fields in `elk-acs-kubernetes/docker/push-images.sh`:
+
+   a. `registry_server` with `loginserver`
    
-   b. registry_username with name
+   b. `registry_username` with `name`
    
-   c. registry_password with the password you get in last step.
-   
-   d. execute it
-7. Modify `elk-acs-kubernetes/helm-charts/start-elk.sh` as above and also replace `registry_email` with a valid email address.
-8.  Run the following to create storage account in "devEastUSGroup123456":
-    * `RESOURCE_GROUP=devEastUSGroup123456`
-    * `LOCATION=eastus`
-    * `STORAGE_ACCOUNT=azdisksa`
-    * `az storage account create --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --sku Standard_GRS`
-    * `export AZURE_STORAGE_CONNECTION_STRING="$(az storage account show-connection-string --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP -o tsv)"`
-    * `az storage container create -n vhds`
-9. Replace `registry` in `elk-acs-kubernetes/helm-charts/config.yml` with `loginserver`, and `location` with "eastus".
-10. `az acs list --resource-group=devEastUSGroup123456` to get `dnsPrefix` of ACS instance in "devEastUSGroup123456".
-11. `kubectl config set-context <dnsPrefix>` to set the current context for `kubectl`.
-12. `helm init` to install tiller to Kubernetes cluster.
-13. `elk-acs-kubernetes/helm-charts/start-elk.sh` to deploy ELK cluster.
-14. Update `registry` in `elk-acs-kubernetes/helm-charts/filebeat/values.yaml` with registry name and run `helm install filebeat`.
-15. Repeat 9-12 for resource group "devWestEuropeGroup123456".
-16. You can run `kubectl proxy` to launch a proxy at http://localhost:8001/ui to monitor deployment status. After deployments finish, access public Kibana endpoint, create index pattern and start to visualize log streams.
+   c. `registry_password` with `password`.
+7. Update `elk-acs-kubernetes/helm-charts/start-elk.sh` as above as well as `registry_email` with a valid email address.
+8. Run the following commands to create storage account in the corresponding resource group e.g. `devEastUSGroup123456`:
+   ```shell
+   RESOURCE_GROUP=devEastUSGroup123456
+   LOCATION=eastus
+   STORAGE_ACCOUNT=azdisksa
+   az storage account create --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP --sku Standard_GRS
+   export AZURE_STORAGE_CONNECTION_STRING="$(az storage account show-connection-string --name $STORAGE_ACCOUNT --resource-group $RESOURCE_GROUP -o tsv)"
+   az storage container create -n vhds
+   ```
+9. In `elk-acs-kubernetes/helm-charts/config.yml`, update `registry` with `loginserver` and `location` with "eastus".
+10. Run the following command to get `dnsPrefix` of ACS instance.
+   ```shell
+   az acs list --resource-group=devEastUSGroup123456
+   ```
+11. Run the following command to set the current context for kubectl.
+   ```shell
+   kubectl config set-context <dnsPrefix>
+   ```
+12. Run the following command to install tiller to Kubernetes cluster.
+   ```shell
+   helm init
+   ```
+13. Run the following command to deploy ELK cluster.
+   ```shell
+   elk-acs-kubernetes/helm-charts/start-elk.sh
+   ```
+14. Update `registry` in `elk-acs-kubernetes/helm-charts/filebeat/values.yaml` with registry name and run the following command to install filebeat.
+   ```shell
+   helm install filebeat
+   ```
+15. Repeat step 9 to 12 for resource group "devWestEuropeGroup123456".
+16. You can now run the following command to launch a proxy at http://localhost:8001/ui to monitor deployment status.
+   ```shell
+   kubectl proxy
+   ```
+After deployments finish, access public Kibana endpoint, create index pattern and start to visualize log streams.
 
 ### Automate continuous integration and continuous deployment (CI/CD) using Jenkins ###
 
