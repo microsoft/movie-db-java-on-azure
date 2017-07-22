@@ -95,13 +95,21 @@ In this basic layout, the following design decisions have been implemented:
 
 1. Build an initial layout on Azure using an ARM template from using one of the following methods:
 
-      ```shell
-      source provision.sh
-      ```
-      > **NOTE**: On Windows, run all shell scripts in Git Bash.  
+   ```shell
+   source provision.sh
+   ```
+   > **NOTE**: On Windows, run all shell scripts in Git Bash.  
 
-      The provisioning script will take a long time to process.
+   The provisioning script will create the following resources in Azure, which may take a long time to complete:
 
+   * A MySQL instance
+   * A Redis Cache instance
+   * A Function app for resizing images
+   * Two traffic managers for load balancing
+   * An Azure Container Registry for hosting a private Docker image
+   * Two Linux-based web apps for front-end websites
+   * Two Azure Container Services (Kubernetes Clusters) for REST API services
+   * An Azure Container Service (Kubernetes Cluster) for a Jenkins server
 
 ### Deploy the internal-facing data app into a Kubernetes cluster in ACS ###
 
