@@ -18,7 +18,7 @@
       "properties": {
         "mode": "incremental",
         "templateLink": {
-          "uri": "https://javaonazure.blob.core.windows.net/deployment/container-registry.json",
+          "uri": "https://raw.githubusercontent.com/Microsoft/movie-db-java-on-azure/master/deployment/arm/container-registry.json",
           "contentVersion": "1.0.0.0"
         }
       }
@@ -30,7 +30,7 @@
       "properties": {
         "mode": "incremental",
         "templateLink": {
-          "uri": "https://javaonazure.blob.core.windows.net/deployment/database.json",
+          "uri": "https://raw.githubusercontent.com/Microsoft/movie-db-java-on-azure/master/deployment/arm/database.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -50,7 +50,7 @@
       "properties": {
         "mode": "incremental",
         "templateLink": {
-          "uri": "https://javaonazure.blob.core.windows.net/deployment/redis.json",
+          "uri": "https://raw.githubusercontent.com/Microsoft/movie-db-java-on-azure/master/deployment/arm/redis.json",
           "contentVersion": "1.0.0.0"
         }
       }
@@ -62,7 +62,7 @@
       "properties": {
         "mode": "incremental",
         "templateLink": {
-          "uri": "https://javaonazure.blob.core.windows.net/deployment/function-app.json",
+          "uri": "https://raw.githubusercontent.com/Microsoft/movie-db-java-on-azure/master/deployment/arm/function-app.json",
           "contentVersion": "1.0.0.0"
         }
       }
@@ -74,7 +74,7 @@
       "properties": {
         "mode": "incremental",
         "templateLink": {
-          "uri": "https://javaonazure.blob.core.windows.net/deployment/traffic-manager.json",
+          "uri": "https://raw.githubusercontent.com/Microsoft/movie-db-java-on-azure/master/deployment/arm/traffic-manager.json",
           "contentVersion": "1.0.0.0"
         }
       }
