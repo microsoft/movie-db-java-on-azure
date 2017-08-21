@@ -178,35 +178,15 @@ Run the following command to test whether your data app was successfully deploye
    mvn package docker:build -DpushImage
    ```
 
-1. Use Azure CLI to deploy the web app to a Linux container in Azure App Service:
+1. Use [Maven plugin for Azure Web Apps](https://github.com/Microsoft/azure-maven-plugins/tree/master/azure-webapp-maven-plugin) 
+to deploy the web app to a Linux container in Azure App Service:
 
    ```shell
-   az webapp config container set -g ${EAST_US_GROUP} \
-      -n ${EAST_US_WEBAPP_NAME} \
-      --docker-custom-image-name ${ACR_LOGIN_SERVER}/web-app \
-      --docker-registry-server-url http://${ACR_LOGIN_SERVER} \
-      --docker-registry-server-user ${ACR_USERNAME} \
-      --docker-registry-server-password ${ACR_PASSWORD}
-   
-   az webapp config set -g ${EAST_US_GROUP} \
-      -n ${EAST_US_WEBAPP_NAME} \
-      --linux-fx-version "DOCKER|${ACR_LOGIN_SERVER}/web-app"
-
-   az webapp config appsettings set -g ${EAST_US_GROUP} \
-      -n ${EAST_US_WEBAPP_NAME} \
-      --settings DATA_API_URL=${DATA_API_URL} \
-      PORT=${WEB_APP_CONTAINER_PORT} \
-      WEB_APP_CONTAINER_PORT=${WEB_APP_CONTAINER_PORT} \
-      STORAGE_CONNECTION_STRING=${STORAGE_CONNECTION_STRING} \
-      ORIGINAL_IMAGE_CONTAINER=${ORIGINAL_IMAGE_CONTAINER} \
-      THUMBNAIL_IMAGE_CONTAINER=${THUMBNAIL_IMAGE_CONTAINER} \
-      REDIS_HOST=${REDIS_HOST} REDIS_PASSWORD=${REDIS_PASSWORD}
-
-   az webapp restart -g ${EAST_US_GROUP} -n ${EAST_US_WEBAPP_NAME}
+   mvn azure-webapp:deploy -Dwebapp.resourceGroup=${EAST_US_GROUP} -Dwebapp.appName=${EAST_US_WEBAPP_NAME}
    ```
 
-   **NOTE**: Microsoft is currently developing a Maven plugin to accomplish these steps, So in the future you will be able to use `mvn deploy`.
-
+   Learn more details about how to use Maven Plugin for Azure Web Apps with Azure Container Registry from 
+   [this step-by-step tutorial](https://docs.microsoft.com/en-us/azure/app-service-web/app-service-web-deploy-spring-boot-app-from-container-registry-using-maven-plugin) at Microsoft Docs Site.
 
 #### Test and diagnose your sample deployment ####
 
@@ -248,18 +228,7 @@ To enable monitoring using *New Relic*, use the following steps.
 - Run the following commands to deploy the web app to AAS:
 
    ```shell
-   az webapp config container set -g ${EAST_US_GROUP} \
-      -n ${EAST_US_WEBAPP_NAME} \
-      --docker-custom-image-name ${ACR_LOGIN_SERVER}/web-app-w-new-relic \
-      --docker-registry-server-url http://${ACR_LOGIN_SERVER} \
-      --docker-registry-server-user ${ACR_USERNAME} \
-      --docker-registry-server-password ${ACR_PASSWORD}
-
-   az webapp config set -g ${EAST_US_GROUP} \
-      -n ${EAST_US_WEBAPP_NAME} \
-      --linux-fx-version "DOCKER|${ACR_LOGIN_SERVER}/web-app-w-new-relic"
-
-   az webapp restart -g ${EAST_US_GROUP} -n ${EAST_US_WEBAPP_NAME}
+   mvn azure-webapp:deploy@with-new-relic -Dwebapp.resourceGroup=${EAST_US_GROUP} -Dwebapp.appName=${EAST_US_WEBAPP_NAME}
    ```
 
 - Browse to your account portal in New Relic to see real-time monitoring data.
@@ -285,18 +254,7 @@ To enable diagnostics using *OverOps*, use the following steps.
 - Run the following commands to deploy the web app to AAS:
 
    ```shell
-   az webapp config container set -g ${EAST_US_GROUP} \
-      -n ${EAST_US_WEBAPP_NAME} \
-      --docker-custom-image-name ${ACR_LOGIN_SERVER}/web-app-w-overops \
-      --docker-registry-server-url http://${ACR_LOGIN_SERVER} \
-      --docker-registry-server-user ${ACR_USERNAME} \
-      --docker-registry-server-password ${ACR_PASSWORD}
-
-   az webapp config set -g ${EAST_US_GROUP} \
-      -n ${EAST_US_WEBAPP_NAME} \
-      --linux-fx-version "DOCKER|${ACR_LOGIN_SERVER}/web-app-w-overops"
-
-   az webapp restart -g ${EAST_US_GROUP} -n ${EAST_US_WEBAPP_NAME}
+   mvn azure-webapp:deploy@with-overops -Dwebapp.resourceGroup=${EAST_US_GROUP} -Dwebapp.appName=${EAST_US_WEBAPP_NAME}
    ```
 
 - Browse to your account portal in OverOps to see real-time diagnostic data.
