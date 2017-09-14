@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: "data-app"
-          image: ${docker.image.prefix}/data-app:${project.version}
+          image: ${docker.image.prefix}/data-app:latest
           ports:
             - containerPort: ${container.port}
           resources:
