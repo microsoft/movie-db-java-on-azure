@@ -111,6 +111,9 @@
                     <registryUrl>https://${docker.image.prefix}</registryUrl>
                     <dockerDirectory>src/main/docker/base</dockerDirectory>
                     <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+                    <imageTags>
+                        <imageTag>${project.version}</imageTag>
+                    </imageTags>
                     <resources>
                         <resource>
                             <targetPath>/</targetPath>
@@ -159,9 +162,6 @@
                         <configuration>
                             <dockerDirectory>src/main/docker/overops</dockerDirectory>
                             <imageName>${docker.image.prefix}/${project.artifactId}-w-overops</imageName>
-                             <imageTags>
-                                <imageTag>${project.version}</imageTag>
-                            </imageTags>
                             <buildArgs>
                                 <OVEROPSSK>${env.OVEROPSSK}</OVEROPSSK>
                             </buildArgs>

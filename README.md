@@ -67,7 +67,7 @@ In this basic layout, the following design decisions have been implemented:
       ```xml
       <servers>
          <server>
-            <id>${env.ACR_NAME}</id>
+            <id>${env.ACR_NAME}.azurecr.io</id>
             <username>${env.ACR_USERNAME}</username>
             <password>${env.ACR_PASSWORD}</password>
             <configuration>
@@ -129,15 +129,7 @@ In this basic layout, the following design decisions have been implemented:
 1. Deploy the data app to a Kubernetes cluster in ACS using the Kubernetes CLI:
 
    ```shell    
-   kubectl create secret docker-registry ${ACR_LOGIN_SERVER} \
-      --docker-server=${ACR_LOGIN_SERVER} \
-      --docker-username=${ACR_USERNAME} \
-      --docker-password=${ACR_PASSWORD} \
-      --docker-email=john_doe@contoso.com \
-      --namespace=${TARGET_ENV} \
-      --save-config
-      
-   envsubst < ../deployment/data-app/deploy.yaml | kubectl apply --namespace=${TARGET_ENV} -f -
+   mvn fabric8:resource fabric8:apply
    ```
 
 1. Run below command to watch the creation process of your service object in Kubernetes.
