@@ -144,7 +144,7 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.11</version>
                 <configuration>
-                    <serverId>${env.ACR_NAME}</serverId>
+                    <serverId>${env.ACR_LOGIN_SERVER}</serverId>
                     <registryUrl>https://${env.ACR_LOGIN_SERVER}</registryUrl>
                     <dockerDirectory>src/main/docker/base</dockerDirectory>
                     <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
@@ -249,7 +249,7 @@
                 <configuration>
                     <containerSettings>
                         <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
-                        <serverId>${env.ACR_NAME}</serverId>
+                        <serverId>${env.ACR_LOGIN_SERVER}</serverId>
                         <registryUrl>https://${env.ACR_LOGIN_SERVER}</registryUrl>
                     </containerSettings>
                     <appSettings>
@@ -296,7 +296,7 @@
                         <configuration>
                             <containerSettings>
                                 <imageName>${docker.image.prefix}/${project.artifactId}-w-new-relic</imageName>
-                                <serverId>${env.ACR_NAME}</serverId>
+                                <serverId>${env.ACR_LOGIN_SERVER}</serverId>
                                 <registryUrl>https://${env.ACR_LOGIN_SERVER}</registryUrl>
                             </containerSettings>
                         </configuration>
@@ -309,7 +309,7 @@
                         <configuration>
                             <containerSettings>
                                 <imageName>${docker.image.prefix}/${project.artifactId}-w-overops</imageName>
-                                <serverId>${env.ACR_NAME}</serverId>
+                                <serverId>${env.ACR_LOGIN_SERVER}</serverId>
                                 <registryUrl>https://${env.ACR_LOGIN_SERVER}</registryUrl>
                             </containerSettings>
                         </configuration>
@@ -322,7 +322,7 @@
                         <configuration>
                             <containerSettings>
                                 <imageName>${docker.image.prefix}/${project.artifactId}-w-all</imageName>
-                                <serverId>${env.ACR_NAME}</serverId>
+                                <serverId>${env.ACR_LOGIN_SERVER}</serverId>
                                 <registryUrl>https://${env.ACR_LOGIN_SERVER}</registryUrl>
                             </containerSettings>
                         </configuration>

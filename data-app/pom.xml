@@ -107,8 +107,8 @@
                 <artifactId>docker-maven-plugin</artifactId>
                 <version>0.4.11</version>
                 <configuration>
-                    <serverId>${docker.image.prefix}</serverId>
-                    <registryUrl>https://${docker.image.prefix}</registryUrl>
+                    <serverId>${env.ACR_LOGIN_SERVER}</serverId>
+                    <registryUrl>https://${env.ACR_LOGIN_SERVER}</registryUrl>
                     <dockerDirectory>src/main/docker/base</dockerDirectory>
                     <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
                     <imageTags>
@@ -214,7 +214,7 @@
                 <version>3.5.30</version>
                 <configuration>
                     <ignoreServices>false</ignoreServices>
-                    <registry>${docker.image.prefix}</registry>
+                    <registry>${env.ACR_LOGIN_SERVER}</registry>
                 </configuration>
             </plugin>
         </plugins>
