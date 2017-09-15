@@ -216,14 +216,6 @@
                     <ignoreServices>false</ignoreServices>
                     <registry>${docker.image.prefix}</registry>
                 </configuration>
-                <executions>
-                    <execution>
-                    <id>fabric8</id>
-                    <goals>
-                        <goal>resource</goal>
-                    </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
