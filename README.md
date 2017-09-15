@@ -129,7 +129,7 @@ In this basic layout, the following design decisions have been implemented:
 1. Deploy the data app to a Kubernetes cluster in ACS using the Kubernetes CLI:
 
    ```shell    
-   mvn fabric8:resource fabric8:apply
+   mvn clean fabric8:resource fabric8:apply
    ```
 
 1. Run below command to watch the creation process of your service object in Kubernetes.
