@@ -47,8 +47,8 @@ function show_teardown_help()
 Deprovision.sh will delete all Azure resources created by provision.sh.
 
 Usage:
-    bash teardown.sh [options]
-    ./teardown.sh [options]
+    bash deprovision.sh [options]
+    ./deprovision.sh [options]
 
 Options:
     --env [value]           Optional. Target environment to provision.
