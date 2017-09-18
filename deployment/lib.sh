@@ -590,7 +590,7 @@ function export_database_details()
   local server_name=$(az mysql server list -g ${resource_group} --query [0].name | tr -d '"')
   local username=$(az mysql server show -g ${resource_group} -n ${server_name} --query administratorLogin | tr -d '"')
   local endpoint=$(az mysql server show -g ${resource_group} -n ${server_name} --query fullyQualifiedDomainName | tr -d '"')
-  local database_name=$(az mysql db list -g ${resource_group} --server-name ${server_name} --query [0].name | tr -d '"')
+  local database_name=$(az mysql db list -g ${resource_group} --server-name ${server_name} --query [].name | jq -r '. - ["mysql","sys","performance_schema","information_schema"] | .[0]')
 
   export MYSQL_USERNAME=${username}@${server_name}
   export MYSQL_SERVER_ENDPOINT=jdbc:mysql://${endpoint}:3306/?serverTimezone=UTC
