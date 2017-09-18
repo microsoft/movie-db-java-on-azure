@@ -40,12 +40,12 @@ print_banner 'Start provisioning shared resources...'
 az group create -n ${c_group} -l ${EAST_US}
 create_shared_resources ${c_group} ${MYSQL_ADMIN_USERNAME} ${MYSQL_PASSWORD}
 
-print_banner 'Start provisioning resources in West US region...'
+print_banner 'Start provisioning resources in East US region...'
 az group create -n ${e_us_group} -l ${EAST_US}
 create_webapp ${e_us_group} westus
 create_kubernetes ${e_us_group} ${ACS_NAME}
 
-print_banner 'Start provisioning resources in North Europe region...'
+print_banner 'Start provisioning resources in West Europe region...'
 az group create -n ${w_eu_group} -l ${WEST_EUROPE}
 create_webapp ${w_eu_group} westeurope
 create_kubernetes ${w_eu_group} ${ACS_NAME}
