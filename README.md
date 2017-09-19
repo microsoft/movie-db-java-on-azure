@@ -67,7 +67,7 @@ In this basic layout, the following design decisions have been implemented:
       ```xml
       <servers>
          <server>
-            <id>${env.ACR_NAME}.azurecr.io</id>
+            <id>${env.ACR_LOGIN_SERVER}</id>
             <username>${env.ACR_USERNAME}</username>
             <password>${env.ACR_PASSWORD}</password>
             <configuration>
