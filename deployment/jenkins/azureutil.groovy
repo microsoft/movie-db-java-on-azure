@@ -126,7 +126,7 @@ def deployDataApp(String targetEnv, String resGroup) {
         export DATA_APP_CONTAINER_PORT=${config.DATA_APP_CONTAINER_PORT}
         export TARGET_ENV=${targetEnv}
         cd data-app
-        mvn fabric8:resource fabric8:apply
+        mvn clean fabric8:resource fabric8:apply
      
         # Check whether there is any redundant IP address
         ip_count=\$(az network public-ip list -g ${resGroup} --query "[?tags.service=='${targetEnv}/data-app'] | length([*])")
