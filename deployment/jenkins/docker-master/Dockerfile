@@ -18,8 +18,8 @@ RUN /usr/local/bin/install-plugins.sh \
     ws-cleanup \
     ant \
     gradle \
-    workflow-job:2.10 \
-    workflow-multibranch:2.10 \
+    workflow-job \
+    workflow-multibranch \
     workflow-aggregator \
     github-organization-folder \
     pipeline-stage-view \
