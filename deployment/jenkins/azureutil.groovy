@@ -121,26 +121,12 @@ def deployDataApp(String targetEnv, String resGroup) {
         # Change context to target Kubernetes cluster
         context_name=\$(az acs list -g ${resGroup} --query [0].masterProfile.dnsPrefix | tr '[:upper:]' '[:lower:]' | tr -d '"')
         kubectl config use-context \${context_name}
-     
-        # Create private container registry if not exist
-        if [ -z "\$(kubectl get ns ${targetEnv} --ignore-not-found)" ]; then
-          kubectl create ns ${targetEnv} --save-config
-        fi
-        secret_exist=\$(kubectl get secret ${acrLoginServer} --namespace=${targetEnv} --ignore-not-found)
-        if [ -z "\${secret_exist}" ]; then
-          kubectl create secret docker-registry ${acrLoginServer} --namespace=${targetEnv} \\
-                                                                  --docker-server=${acrLoginServer} \\
-                                                                  --docker-username=${acrUsername} \\
-                                                                  --docker-password=${acrPassword} \\
-                                                                  --docker-email=foo@foo.bar \\
-                                                                  --save-config
-        fi
 
         # Deploy data app
-        export ACR_LOGIN_SERVER=${acrLoginServer}
         export DATA_APP_CONTAINER_PORT=${config.DATA_APP_CONTAINER_PORT}
         export TARGET_ENV=${targetEnv}
-        envsubst < ./deployment/data-app/deploy.yaml | kubectl apply --namespace=${targetEnv} -f -
+        cd data-app
+        mvn fabric8:resource fabric8:apply
      
         # Check whether there is any redundant IP address
         ip_count=\$(az network public-ip list -g ${resGroup} --query "[?tags.service=='${targetEnv}/data-app'] | length([*])")
