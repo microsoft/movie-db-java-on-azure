@@ -255,7 +255,7 @@
                     <appSettings>
                         <property>
                             <name>PORT</name>
-                            <value>${WEBAPP_CONTAINER_PORT}</value>
+                            <value>${WEB_APP_CONTAINER_PORT}</value>
                         </property>
                         <property>
                             <name>WEB_APP_CONTAINER_PORT</name>
