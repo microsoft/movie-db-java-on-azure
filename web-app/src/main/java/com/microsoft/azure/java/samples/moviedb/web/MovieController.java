@@ -15,6 +15,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,9 @@ public class MovieController {
     private static final Logger logger = LoggerFactory.getLogger(MovieController.class);
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     private MovieRepository movieRepository;
 
     @Autowired
@@ -52,7 +56,8 @@ public class MovieController {
         Movie movie = movieRepository.getMovie(Long.toString(id));
         if (movie != null) {
             if (movie.getImageUri() != null) {
-                movie.setImageFullPathUri(azureStorageUploader.getAzureStorageBaseUri() + movie.getImageUri());
+                movie.setImageFullPathUri(
+                        azureStorageUploader.getAzureStorageBaseUri(applicationContext) + movie.getImageUri());
             }
 
             model.addAttribute("movie", movie);
@@ -113,7 +118,7 @@ public class MovieController {
         logger.debug(file.getOriginalFilename());
 
         String newName = id + "." + FilenameUtils.getExtension(file.getOriginalFilename());
-        String imageUri = this.azureStorageUploader.uploadToAzureStorage(file, newName.toLowerCase());
+        String imageUri = this.azureStorageUploader.uploadToAzureStorage(applicationContext, file, newName.toLowerCase());
 
         if (imageUri != null) {
             Timestamp timestamp = new Timestamp(Calendar.getInstance().getTime().getTime());
@@ -162,7 +167,8 @@ public class MovieController {
                         azureStorageUploader.getOriginalImageContainer().toLowerCase(),
                         azureStorageUploader.getThumbnailImageContainer().toLowerCase());
 
-                movie.setThumbnailFullPathUri(azureStorageUploader.getAzureStorageBaseUri() + thumbnailUri);
+                movie.setThumbnailFullPathUri(
+                        azureStorageUploader.getAzureStorageBaseUri(applicationContext) + thumbnailUri);
             }
         }
 

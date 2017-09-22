@@ -33,4 +33,5 @@ RUN /usr/local/bin/install-plugins.sh \
     mailer \
     kubernetes \
     job-dsl \
-    groovy
+    groovy \
+    azure-app-service
