@@ -49,8 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and()
                     .addFilterBefore(ssoFilter(), BasicAuthenticationFilter.class);
             // @formatter:on
-        }
-        else{
+        } else {
             http.antMatcher("/**").authorizeRequests().anyRequest().permitAll();
         }
     }
