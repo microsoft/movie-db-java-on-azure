@@ -31,11 +31,10 @@ public class GlobalControllerAdvice {
 
         if (facebookAppId != null && !facebookAppId.isEmpty()) {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-            if (auth instanceof OAuth2Authentication){
-                displayName = (String)((LinkedHashMap) ((OAuth2Authentication) auth).getUserAuthentication().getDetails()).get("name");
+            if (auth instanceof OAuth2Authentication) {
+                displayName = (String) ((LinkedHashMap) ((OAuth2Authentication) auth).getUserAuthentication().getDetails()).get("name");
                 isAllowedToUpdateMovieDB = auth.isAuthenticated();
-            }
-            else {
+            } else {
                 isAllowedToUpdateMovieDB = false;
             }
         }
