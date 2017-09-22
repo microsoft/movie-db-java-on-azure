@@ -1,0 +1,54 @@
+apiVersion: "extensions/v1beta1"
+kind: "Deployment"
+metadata:
+  name: "data-app"
+  namespace: ${target.environment}
+  labels:
+    name: "data-app"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: "data-app"
+    spec:
+      containers:
+        - name: "data-app"
+          image: ${docker.image.prefix}/data-app:${project.version}
+          ports:
+            - containerPort: ${container.port}
+          resources:
+            limits:
+              cpu: 1
+              memory: 4Gi
+            requests:
+              cpu: 1
+              memory: 2Gi
+          env:
+            - name: MYSQL_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: mysqlUsername
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: mysqlPassword
+            - name: MYSQL_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: my-secrets
+                  key: mysqlEndpoint
+            - name: DATA_APP_CONTAINER_PORT
+              value: "${container.port}"
+          livenessProbe:
+            httpGet:
+              path: /api/v1
+              port: ${container.port}
+            initialDelaySeconds: 60
+            timeoutSeconds: 5
+      imagePullSecrets:
+        - name: ${docker.image.prefix}
+      securityContext:
+        fsGroup: 1000

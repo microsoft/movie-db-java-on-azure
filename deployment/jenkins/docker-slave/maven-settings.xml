@@ -131,7 +131,7 @@ under the License.
     </server>
     -->
     <server>
-      <id>${env.ACR_NAME}</id>
+      <id>${env.ACR_LOGIN_SERVER}</id>
       <username>${env.ACR_USERNAME}</username>
       <password>${env.ACR_PASSWORD}</password>
       <configuration>

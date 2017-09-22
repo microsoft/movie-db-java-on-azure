@@ -1,0 +1,15 @@
+apiVersion: "v1"
+kind: "Service"
+metadata:
+  name: "data-app"
+  namespace: ${target.environment}
+spec:
+  type: "LoadBalancer"
+  selector:
+    name: "data-app"
+  ports:
+    -
+      name: "http"
+      port: 80
+      targetPort: ${container.port}
+      protocol: "TCP"
