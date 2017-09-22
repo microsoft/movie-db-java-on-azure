@@ -4,6 +4,7 @@
  * license information.
  */
 
+import groovy.json.JsonSlurper
 import hudson.model.*
 import jenkins.model.*
 import hudson.security.FullControlOnceLoggedInAuthorizationStrategy
@@ -18,6 +19,7 @@ import com.cloudbees.plugins.credentials.*
 import com.cloudbees.plugins.credentials.common.*
 import com.cloudbees.plugins.credentials.domains.*
 import com.cloudbees.plugins.credentials.impl.*
+import com.microsoft.azure.util.AzureCredentials
 
 /**
  * Set up security for the Jenkins instance with below configuration.
@@ -95,6 +97,42 @@ void addKubeCredential(String credentialId) {
     SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), kubeCredential)
 }
 
+void addACRCredential(String credentialId, String configFile) {
+    String content = new File(configFile).text
+    def jsonSlurper = new JsonSlurper()
+    def config = jsonSlurper.parseText(content)
+
+    def acrCredential = new UsernamePasswordCredentialsImpl(
+        CredentialsScope.GLOBAL,
+        credentialId,
+        'Azure Container Registry',
+        config.aadClientId,
+        config.aadClientSecret
+    )
+    SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), acrCredential)
+}
+
+void addAzureCredential(String credentialId, String configFile) {
+    String content = new File(configFile).text
+    def jsonSlurper = new JsonSlurper()
+    def config = jsonSlurper.parseText(content)
+
+    def azureCredential = new AzureCredentials(
+        CredentialsScope.GLOBAL,
+        credentialId,
+        'Azure Service Principal',
+        config.subscriptionId,
+        config.aadClientId,
+        config.aadClientSecret,
+        'https://login.microsoftonline.com/' + config.tenantId + '/oauth2',
+        '',
+        '',
+        '',
+        ''
+    )
+    SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), azureCredential)
+}
+
 /**
  * Configure Kubernetes plugin
  */
@@ -143,6 +181,8 @@ Thread.start {
     this.createPipeline(githubRepo, 'prod', 'prod')
     // Configure Kubernetes plugin
     this.configureKubernetes()
+    this.addACRCredential('acr', '/etc/kubernetes/azure.json')
+    this.addAzureCredential('azure-sp', '/etc/kubernetes/azure.json')
     // Set number of executor to 0 so that slave agents will be created for each build
     this.setExecutorNum(0)
     // Setup security

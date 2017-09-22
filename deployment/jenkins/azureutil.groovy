@@ -66,36 +66,37 @@ def prepareEnv(String targetEnv) {
 
 def deployFunction() {
     sh """
-        # Storage connection for images 
+        # Storage connection for images
         storage_name=\$(az storage account list -g ${config.COMMON_GROUP} --query [2].name | tr -d '"')
         storage_conn_str=\$(az storage account show-connection-string -g ${config.COMMON_GROUP} -n \${storage_name} --query connectionString | tr -d '"')
-        
+
         function_id=\$(az functionapp list -g ${config.COMMON_GROUP} --query [0].id | tr -d '"')
         az functionapp config appsettings set --ids \${function_id} --settings STORAGE_CONNECTION_STRING=\${storage_conn_str}
         az functionapp deployment source sync --ids \${function_id}
     """
 }
 
-def deployWebApp(String resGroup) {
+def deployWebApp(String resGroup, String dockerFilePath) {
+    def appName = sh(
+            script: "az webapp list -g ${resGroup} --query [0].name | tr -d '\"'",
+            returnStdout: true
+    ).trim()
+
+    azureWebAppPublish appName: appName, azureCredentialsId: 'azure-sp', dockerFilePath: dockerFilePath, dockerImageName: "${this.acrName}.azurecr.io/web-app", dockerImageTag: '', dockerRegistryEndpoint: [credentialsId: 'acr', url: "https://${this.acrName}.azurecr.io"], filePath: '', publishType: 'docker', resourceGroup: resGroup, slotName: '', sourceDirectory: '', targetDirectory: ''
+
     sh """
         data_api_endpoint=\$(az network traffic-manager profile list -g ${config.COMMON_GROUP} --query [0].dnsConfig.fqdn | tr -d '"')
         webapp_id=\$(az resource list -g ${resGroup} --resource-type Microsoft.Web/sites --query [0].id | tr -d '"')
-        
-        # Storage connection for images 
+
+        # Storage connection for images
         storage_name=\$(az storage account list -g ${config.COMMON_GROUP} --query [2].name | tr -d '"')
         storage_conn_str=\$(az storage account show-connection-string -g ${config.COMMON_GROUP} -n \${storage_name} --query connectionString | tr -d '"')
-        
+
         # Redis credentials
         redis_name=\$(az redis list -g ${config.COMMON_GROUP} --query [0].name | tr -d '"')
         redis_host=\$(az redis show -g ${config.COMMON_GROUP} -n \${redis_name} --query hostName | tr -d '"')
         redis_password=\$(az redis list-keys -g ${config.COMMON_GROUP} -n \${redis_name} --query primaryKey | tr -d '"')
-        
-        az webapp config container set --ids \${webapp_id} \\
-                                      --docker-custom-image-name ${acrLoginServer}/web-app \\
-                                      --docker-registry-server-url http://${acrLoginServer} \\
-                                      --docker-registry-server-user ${acrUsername} \\
-                                      --docker-registry-server-password ${acrPassword}
-        az webapp config set --ids \${webapp_id} --linux-fx-version "DOCKER|${acrLoginServer}/web-app"
+
         az webapp config appsettings set --ids \${webapp_id} \\
                                         --settings  DATA_API_URL=\${data_api_endpoint} \\
                                                     PORT=${config.WEB_APP_CONTAINER_PORT} \\
@@ -106,7 +107,7 @@ def deployWebApp(String resGroup) {
                                                     REDIS_HOST=\${redis_host} \\
                                                     REDIS_PASSWORD=\${redis_password}
         az webapp restart --ids \${webapp_id}
-        
+
         # Add web-app endpoint to traffic manager
         traffic_manager_name=\$(az resource list -g ${config.COMMON_GROUP} --resource-type Microsoft.Network/trafficManagerProfiles --query [1].name | tr -d '"')
         if [ -z "\$(az network traffic-manager endpoint show -g ${config.COMMON_GROUP} --profile-name \${traffic_manager_name} -n web-app-${resGroup} --type azureEndpoints --query id)" ]; then
@@ -121,7 +122,7 @@ def deployDataApp(String targetEnv, String resGroup) {
         # Change context to target Kubernetes cluster
         context_name=\$(az acs list -g ${resGroup} --query [0].masterProfile.dnsPrefix | tr '[:upper:]' '[:lower:]' | tr -d '"')
         kubectl config use-context \${context_name}
-     
+
         # Create private container registry if not exist
         if [ -z "\$(kubectl get ns ${targetEnv} --ignore-not-found)" ]; then
           kubectl create ns ${targetEnv} --save-config
@@ -141,7 +142,7 @@ def deployDataApp(String targetEnv, String resGroup) {
         export DATA_APP_CONTAINER_PORT=${config.DATA_APP_CONTAINER_PORT}
         export TARGET_ENV=${targetEnv}
         envsubst < ./deployment/data-app/deploy.yaml | kubectl apply --namespace=${targetEnv} -f -
-     
+
         # Check whether there is any redundant IP address
         ip_count=\$(az network public-ip list -g ${resGroup} --query "[?tags.service=='${targetEnv}/data-app'] | length([*])")
         if [ \${ip_count} -gt 1 ]; then
@@ -149,7 +150,7 @@ def deployDataApp(String targetEnv, String resGroup) {
           echo Please check whether there is any unused resource.
           exit 1
         fi
-        
+
         # Wait until external IP is created for data app
         while [ 1 ]
         do
@@ -159,11 +160,11 @@ def deployDataApp(String targetEnv, String resGroup) {
           fi
           sleep 5
         done
-     
+
         # Update DNS name of public ip resource for data app
         ip_resource_guid=\$(az network public-ip show -n \${ip_name} -g ${resGroup} --query resourceGuid | tr -d '"')
         az network public-ip update -g ${resGroup} -n \${ip_name} --dns-name data-app-\${ip_resource_guid} --allocation-method Static
-     
+
         # Add data app to traffic manager
         ip_resource_id=\$(az network public-ip show -g ${resGroup} -n \${ip_name} --query id | tr -d '"')
         traffic_manager_name=\$(az resource list -g ${config.COMMON_GROUP} --resource-type Microsoft.Network/trafficManagerProfiles --query [0].name | tr -d '"')
