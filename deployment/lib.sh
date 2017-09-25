@@ -371,7 +371,8 @@ function create_webapp()
   # Config to disable built-in image, which will be rejected by the jenkins app service plugin.
   # Use a docker hub image instead to provision. It will be replaced by a custom image during deploy.
   local name=$(az resource list -g ${resource_group} --resource-type Microsoft.Web/sites --query [0].name | tr -d '"')
-  az webapp config set -g ${resource_group} -n ${name} --linux-fx-version "DOCKER|NGINX"
+  az webapp config set -g ${resource_group} -n ${name} --linux-fx-version "DOCKER|NGINX" \
+                      --query "{id:id,name:name,provisioningState:properties.provisioningState,resourceGroup:resourceGroup}"
 }
 
 ##############################################################################

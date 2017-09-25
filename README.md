@@ -316,7 +316,7 @@ To enable diagnostics using *OverOps*, use the following steps.
 
 The steps in this section will walk you through the steps to make a simple change to your web app and see those changes reflected on the hom page when you browse to your web app.
 
-1. Using IntelliJ change the name of the web app in the *~/web-app/src/main/resources/static/index.html* page; for example:
+1. Using IntelliJ change the name of the web app in the *~/web-app/src/main/resources/templates/index.html* page; for example:
 
    ```html
    <h1 class="cover-heading">Welcome to My Cool Movie DB on Azure!!!</h1>
