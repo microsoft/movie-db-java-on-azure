@@ -67,12 +67,16 @@ def prepareEnv(String targetEnv) {
 def deployFunction() {
     sh """
         # Storage connection for images
-        storage_name=\$(az storage account list -g ${config.COMMON_GROUP} --query [2].name | tr -d '"')
+        storage_name=\$(az storage account list -g ${config.COMMON_GROUP} --query [1].name | tr -d '"')
         storage_conn_str=\$(az storage account show-connection-string -g ${config.COMMON_GROUP} -n \${storage_name} --query connectionString | tr -d '"')
-
-        function_id=\$(az functionapp list -g ${config.COMMON_GROUP} --query [0].id | tr -d '"')
-        az functionapp config appsettings set --ids \${function_id} --settings STORAGE_CONNECTION_STRING=\${storage_conn_str}
-        az functionapp deployment source sync --ids \${function_id}
+        export STORAGE_CONNECTION_STRING=\${storage_conn_str}
+        
+        # Use maven plugin to deploy azure function
+        # First command is a workaround to make mvn run with Azure logged in.
+        cp -r /home/jenkins/.azure /root/
+        cd azure-functions-java
+        mvn clean package
+        # mvn azure-functions:deploy
     """
 }
 
