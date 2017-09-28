@@ -34,4 +34,5 @@ RUN /usr/local/bin/install-plugins.sh \
     kubernetes \
     job-dsl \
     groovy \
-    azure-app-service
+    azure-app-service \
+    azure-acs

@@ -127,8 +127,32 @@ def deployDataApp(String targetEnv, String resGroup) {
         export DATA_APP_CONTAINER_PORT=${config.DATA_APP_CONTAINER_PORT}
         export TARGET_ENV=${targetEnv}
         cd data-app
-        mvn clean fabric8:resource fabric8:apply
-    
+        mvn clean fabric8:resource
+
+        cat target/fabric8/namespace.yml
+        cat target/fabric8/secrets.yml
+        cat target/fabric8/deployment.yml
+        cat target/fabric8/service.yml
+
+        # Jenkins plugin doesn't support apply namespace
+        kubectl apply -f target/fabric8/namespace.yml
+    """
+
+    acsDeploy azureCredentialsId: 'azure-sp', configFilePaths: 'data-app/target/fabric8/namespace.yml', containerService: 'acs | Kubernetes', enableConfigSubstitution: true, resourceGroupName: resGroup, sshCredentialsId: 'acs-ssh'
+    acsDeploy azureCredentialsId: 'azure-sp', configFilePaths: 'data-app/target/fabric8/deployment.yml', containerService: 'acs | Kubernetes', enableConfigSubstitution: true, resourceGroupName: resGroup, sshCredentialsId: 'acs-ssh'
+    acsDeploy azureCredentialsId: 'azure-sp', configFilePaths: 'data-app/target/fabric8/service.yml', containerService: 'acs | Kubernetes', enableConfigSubstitution: true, resourceGroupName: resGroup, sshCredentialsId: 'acs-ssh'
+
+    // Alternatively, we can use kubernetesDeploy, which is more general
+    // def masterHost = sh(
+    //         script: "az acs show -g ${resGroup} -n 'acs' --query 'masterProfile.fqdn' | tr -d '\"'",
+    //         returnStdout: true
+    // ).trim()
+    // print masterHost
+    // kubernetesDeploy configs: 'data-app/target/fabric8/namespace.yml', credentialsType: 'SSH', kubeConfig: [path: ''], secretName: '', ssh: [sshCredentialsId: 'acs-ssh', sshServer: masterHost], textCredentials: [certificateAuthorityData: '', clientCertificateData: '', clientKeyData: '', serverUrl: 'https://']
+    // kubernetesDeploy configs: 'data-app/target/fabric8/deployment.yml', credentialsType: 'SSH', kubeConfig: [path: ''], secretName: '', ssh: [sshCredentialsId: 'acs-ssh', sshServer: masterHost], textCredentials: [certificateAuthorityData: '', clientCertificateData: '', clientKeyData: '', serverUrl: 'https://']
+    // kubernetesDeploy configs: 'data-app/target/fabric8/service.yml', credentialsType: 'SSH', kubeConfig: [path: ''], secretName: '', ssh: [sshCredentialsId: 'acs-ssh', sshServer: masterHost], textCredentials: [certificateAuthorityData: '', clientCertificateData: '', clientKeyData: '', serverUrl: 'https://']
+
+    sh """
         # Check whether there is any redundant IP address
         ip_count=\$(az network public-ip list -g ${resGroup} --query "[?tags.service=='${targetEnv}/data-app'] | length([*])")
         if [ \${ip_count} -gt 1 ]; then
