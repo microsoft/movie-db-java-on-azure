@@ -63,23 +63,6 @@ def prepareEnv(String targetEnv) {
     ).trim()
 }
 
-
-def deployFunction() {
-    sh """
-        # Storage connection for images
-        storage_name=\$(az storage account list -g ${config.COMMON_GROUP} --query [1].name | tr -d '"')
-        storage_conn_str=\$(az storage account show-connection-string -g ${config.COMMON_GROUP} -n \${storage_name} --query connectionString | tr -d '"')
-        export STORAGE_CONNECTION_STRING=\${storage_conn_str}
-        
-        # Use maven plugin to deploy azure function
-        # First command is a workaround to make mvn run with Azure logged in.
-        cp -r /home/jenkins/.azure /root/
-        cd azure-functions-java
-        mvn clean package
-        # mvn azure-functions:deploy
-    """
-}
-
 def deployWebApp(String resGroup, String dockerFilePath) {
     def appName = sh(
             script: "az webapp list -g ${resGroup} --query [0].name | tr -d '\"'",
