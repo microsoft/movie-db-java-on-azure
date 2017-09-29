@@ -38,9 +38,9 @@ public class Function {
     }
 
     @FunctionName("resize")
-    @BlobOutput(name = "myOutputBlob", path = "outcontainer/{name}",
+    @BlobOutput(name = "myOutputBlob", path = "images-thumbnail/{name}",
             connection = "STORAGE_CONNECTION_STRING", dataType = "binary")
-    public byte[] functionHandler(@BlobTrigger(name = "myBlob", path = "incontainer/{name}",
+    public byte[] functionHandler(@BlobTrigger(name = "myBlob", path = "images-original/{name}",
             connection = "STORAGE_CONNECTION_STRING",
             dataType = "binary") byte[] myBlob,
                                   final ExecutionContext executionContext) throws IOException {

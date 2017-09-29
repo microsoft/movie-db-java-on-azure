@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a java function running in Azure Functions service that resizes images located in azure storage container `incontainer` and outputs resized images to container `outconatiner`.
+This is a java function running in Azure Functions service that resizes images located in azure storage container `images-original` and outputs resized images to container `images-thumbnail`.
 
 This java function can be easily deployed to Azure Functions with Maven plugin `azure-functions-maven-plugin`.
 
