@@ -6,6 +6,7 @@ import com.microsoft.azure.serverless.functions.annotation.BlobTrigger;
 import com.microsoft.azure.serverless.functions.annotation.FunctionName;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
