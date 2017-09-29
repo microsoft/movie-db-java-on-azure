@@ -499,7 +499,8 @@ function create_secrets_in_jenkins_kubernetes() {
     kubectl delete secret my-secrets
   fi
   kubectl create secret generic my-secrets --save-config \
-                                    --from-literal=jenkinsPassword=${JENKINS_PASSWORD}
+                                    --from-literal=jenkinsPassword=${JENKINS_PASSWORD} \
+                                    --from-file=sshKey=${HOME}/.ssh/id_rsa
 
   if [ -n "$(kubectl get secret kube-config --ignore-not-found)" ]; then
     kubectl delete secret kube-config
