@@ -112,7 +112,7 @@
     {
       "comment": "Optional resource group suffix to avoid naming conflict.",
       "key": "GROUP_SUFFIX",
-      "value": "Zzj29"
+      "value": "Zzj20"
     }
   ]
 }
