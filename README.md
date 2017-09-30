@@ -111,6 +111,10 @@ In this basic layout, the following design decisions have been implemented:
    * Two Azure Container Services (Kubernetes Clusters) for REST API services
    * An Azure Container Service (Kubernetes Cluster) for a Jenkins server
 
+### Deploy Java function to Azure using Maven plugin
+
+Please follow the steps in the *[~/azure-function-java/README.md](azure-function-java/README.md)*.
+
 ### Deploy the internal-facing data app into a Kubernetes cluster in ACS ###
 
 
