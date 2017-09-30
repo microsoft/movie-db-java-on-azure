@@ -62,7 +62,7 @@
       "properties": {
         "mode": "incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/Microsoft/movie-db-java-on-azure/zhijzhao-af/deployment/arm/function-app.json",
+          "uri": "https://raw.githubusercontent.com/Microsoft/movie-db-java-on-azure/master/deployment/arm/function-app.json",
           "contentVersion": "1.0.0.0"
         }
       }
