@@ -30,9 +30,6 @@ node {
   }
 
   stage('Deploy') {
-    // Deploy function
-    azureUtil.deployFunction()
-
     // Deploy data app
     withEnv(["ACR_NAME=${azureUtil.acrName}", "ACR_LOGIN_SERVER=${azureUtil.acrLoginServer}", "ACR_USERNAME=${azureUtil.acrUsername}", "ACR_PASSWORD=${azureUtil.acrPassword}"]) {
       azureUtil.deployDataApp(targetEnv, azureUtil.config.EAST_US_GROUP)
