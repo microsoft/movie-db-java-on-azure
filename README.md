@@ -113,7 +113,7 @@ In this basic layout, the following design decisions have been implemented:
 
 ### Deploy Java function to Azure using Maven plugin
 
-Please follow the steps in the *[~/azure-function-java/README.md](azure-function-java/README.md)*.
+Please follow the steps in the *[~/azure-functions-java/README.md](azure-functions-java/README.md)*.
 
 ### Deploy the internal-facing data app into a Kubernetes cluster in ACS ###
 
