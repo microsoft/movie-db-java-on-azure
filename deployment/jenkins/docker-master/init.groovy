@@ -19,6 +19,7 @@ import com.cloudbees.plugins.credentials.*
 import com.cloudbees.plugins.credentials.common.*
 import com.cloudbees.plugins.credentials.domains.*
 import com.cloudbees.plugins.credentials.impl.*
+import com.cloudbees.jenkins.plugins.sshcredentials.impl.BasicSSHUserPrivateKey;
 import com.microsoft.azure.util.AzureCredentials
 
 /**
@@ -133,6 +134,18 @@ void addAzureCredential(String credentialId, String configFile) {
     SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), azureCredential)
 }
 
+void addSSHCredential(String credentialId) {
+    def credential = new BasicSSHUserPrivateKey(
+        CredentialsScope.GLOBAL,
+        credentialId,
+        "azureuser",
+        new BasicSSHUserPrivateKey.FileOnMasterPrivateKeySource('/root/.ssh/id_rsa'),
+        '',
+        ''
+    )
+    SystemCredentialsProvider.getInstance().getStore().addCredentials(Domain.global(), credential)
+}
+
 /**
  * Configure Kubernetes plugin
  */
@@ -183,6 +196,7 @@ Thread.start {
     this.configureKubernetes()
     this.addACRCredential('acr', '/etc/kubernetes/azure.json')
     this.addAzureCredential('azure-sp', '/etc/kubernetes/azure.json')
+    this.addSSHCredential('acs-ssh')
     // Set number of executor to 0 so that slave agents will be created for each build
     this.setExecutorNum(0)
     // Setup security

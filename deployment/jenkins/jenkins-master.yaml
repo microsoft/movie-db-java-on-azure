@@ -38,7 +38,7 @@ items:
         spec:
           containers:
             - name: "jenkins"
-              image: "microsoft/java-on-azure-jenkins-master:0.1"
+              image: "microsoft/java-on-azure-jenkins-master:0.2"
               ports:
                 - containerPort: 8080
                 - containerPort: 50000
@@ -97,6 +97,8 @@ items:
                   mountPath: "/var/run/docker.sock"
                 - name: "jenkins-home"
                   mountPath: "/var/jenkins_home"
+                - name: "ssh-key"
+                  mountPath: "/root/.ssh"
               readinessProbe:
                 httpGet:
                   path: /login
@@ -118,6 +120,12 @@ items:
             - name: "jenkins-home"
               persistentVolumeClaim:
                 claimName: "jenkins"
+            - name: "ssh-key"
+              secret:
+                secretName: "my-secrets"
+                items:
+                  - key: "sshKey"
+                    path: "id_rsa"
 
   - apiVersion: "v1"
     kind: "Service"
