@@ -148,7 +148,7 @@ In this basic layout, the following design decisions have been implemented:
    mvn package docker:build -DpushImage
    ```
 
-1. Deploy the data app to a Kubernetes cluster in ACS using Maven:
+1. Deploy the data app to a Kubernetes cluster in ACS [using Maven](https://docs.microsoft.com/en-us/azure/container-service/kubernetes/container-service-deploy-spring-boot-app-using-fabric8-maven-plugin):
 
    ```shell    
    mvn clean fabric8:resource fabric8:apply
