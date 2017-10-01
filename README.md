@@ -30,7 +30,7 @@ In the following sections, you will create a development sandbox environment on 
 
 The following diagram illustrates the full topology for this sample application enviroment:
 
-   ![](./media/movie-app-layout.jpg)
+   ![](./media/movie-app-layout-2.jpg)
 
 In this basic layout, the following design decisions have been implemented:
 
@@ -111,9 +111,27 @@ In this basic layout, the following design decisions have been implemented:
    * Two Azure Container Services (Kubernetes Clusters) for REST API services
    * An Azure Container Service (Kubernetes Cluster) for a Jenkins server
 
-### Deploy Java function to Azure using Maven plugin
+### Deploy Java function to Azure Functions using Maven plugin
 
-Please follow the steps in the *[~/azure-function-java/README.md](azure-function-java/README.md)*.
+
+1. Open a command prompt and navigate to the folder which contains the function app, which is located in the "*~/azure-functions-java/*" folder of your repo; this is a Java function app which:
+
+   * Re-sizes images uploaded to Azure Storage
+
+   * Trigger by an Azure Blob upload action.
+
+1. Build the data app:
+
+   ```shell
+   mvn clean package
+   ```
+
+1. Deploy the function app to Azure Functions using Maven plugin:
+
+   ```shell    
+   mvn azure-functions:deploy
+   ```
+
 
 ### Deploy the internal-facing data app into a Kubernetes cluster in ACS ###
 
@@ -130,7 +148,7 @@ Please follow the steps in the *[~/azure-function-java/README.md](azure-function
    mvn package docker:build -DpushImage
    ```
 
-1. Deploy the data app to a Kubernetes cluster in ACS using the Kubernetes CLI:
+1. Deploy the data app to a Kubernetes cluster in ACS [using Maven](https://docs.microsoft.com/en-us/azure/container-service/kubernetes/container-service-deploy-spring-boot-app-using-fabric8-maven-plugin):
 
    ```shell    
    mvn clean fabric8:resource fabric8:apply
@@ -387,9 +405,8 @@ In review, this sample application utilized all of the following design concepts
 
 ### Functions Design ###
 
-- For now, Node.js is being used instead of Java in this sample application for the Azure functions; this will be updated in the near future
 - They are used for independent micro computations
-- They are used for linking two disconnected units in a workflow
+- They are used for linking two disconnected units in a workflow - re-sizes images uploaded to Azure Storage. They are triggered by an Azure Blob upload action.
 
 ## Troubleshooting ##
 
