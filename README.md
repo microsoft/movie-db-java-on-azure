@@ -113,7 +113,6 @@ In this basic layout, the following design decisions have been implemented:
 
 ### Deploy Java function to Azure Functions using Maven plugin
 
-Please follow the steps in the *[~/azure-function-java/README.md](azure-function-java/README.md)*.
 
 1. Open a command prompt and navigate to the folder which contains the function app, which is located in the "*~/azure-functions-java/*" folder of your repo; this is a Java function app which:
 
