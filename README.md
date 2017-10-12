@@ -279,7 +279,7 @@ To enable monitoring using *Azure Application Insights*, use the following steps
 
 - [Get an Application Insights instrumentation key](https://docs.microsoft.com/en-us/azure/application-insights/app-insights-java-get-started)
 
-- Put the key into ~/web-app/src/main/resources/ApplicationInsights.xml
+- Put the key into ~/web-app/src/main/java/com/microsoft/azure/java/samples/moviedb/web/AppInsightsConfig.java
 
 - Redeploy your application
 
