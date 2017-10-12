@@ -273,6 +273,16 @@ To enable diagnostics using *OverOps*, use the following steps.
 
 - Browse to your account portal in OverOps to see real-time diagnostic data.
 
+#### Enable Azure Application Insights ####
+
+To enable monitoring using *Azure Application Insights*, use the following steps.
+
+- Follow [Get an Application Insights instrumentation key](https://docs.microsoft.com/en-us/azure/application-insights/app-insights-java-get-started)
+
+- Put the key into ~/web-app/src/main/resources/ApplicationInsights.xml
+
+- Redeploy your application
+
 
 <!--
 
