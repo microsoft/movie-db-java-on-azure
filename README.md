@@ -277,7 +277,7 @@ To enable diagnostics using *OverOps*, use the following steps.
 
 To enable monitoring using *Azure Application Insights*, use the following steps.
 
-- Follow [Get an Application Insights instrumentation key](https://docs.microsoft.com/en-us/azure/application-insights/app-insights-java-get-started)
+- [Get an Application Insights instrumentation key](https://docs.microsoft.com/en-us/azure/application-insights/app-insights-java-get-started)
 
 - Put the key into ~/web-app/src/main/resources/ApplicationInsights.xml
 
