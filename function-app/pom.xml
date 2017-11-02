@@ -33,8 +33,8 @@
                 <version>0.1.4</version>
                 <configuration>
                     <resourceGroup>${env.COMMON_GROUP}</resourceGroup>
-                    <appName>javafunctionapp</appName>
-                    <region>westus2</region>
+                    <appName>${env.FUNCTION_APP}</appName>
+                    <region>${env.EAST_US}</region>
                     <appSettings>
                         <property>
                             <name>FUNCTIONS_EXTENSION_VERSION</name>

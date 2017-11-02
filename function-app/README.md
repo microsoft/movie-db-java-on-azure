@@ -8,9 +8,15 @@ This java function can be easily deployed to Azure Functions with Maven plugin `
 
 ## Prerequisite
 
-1. The connection string of Azure storage account, which is the account storing images, has to be set to environment variable `STORAGE_CONNECTION_STRING`, before running below commands. If you've run `provision.sh` successfully, this variable is already set for you. The provisioning script also sets the enviroment variable `COMMON_GROUP`, which is the resource group that the app will be deployed to.
+To deploy this function app, below info should be provided.
 
-2. The web app name is specified by configuration property `appName` in pom file. It has to be globally unique.
+1. Resource group name.
+2. Function app name.
+3. Connection string of the image storage.
+
+The three strings are specified by environment variables `COMMON_GROUP`, `FUNCTION_APP` and `STORAGE_CONNECTION_STRING` respectively. 
+
+If you've run `provision.sh` successfully, these three env variables are already set properly for you. No extra operation is needed. Or else, you need to manually set them before running below commands.
 
 ## Commands to run
 
