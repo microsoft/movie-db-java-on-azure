@@ -15,7 +15,7 @@ This java function can be easily deployed to Azure Functions with Maven plugin `
 ## Commands to run
 
    ```shell
-    cd azure-functions-java
+    cd function-app
     mvn clean package
     mvn azure-functions:deploy
    ```
