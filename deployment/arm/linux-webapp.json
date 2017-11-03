@@ -1,5 +1,5 @@
 {
-  "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
     "name": {
@@ -23,6 +23,15 @@
       "location": "[parameters('location')]",
       "properties": {
         "name": "[parameters('name')]",
+        "siteConfig": {
+            "appSettings": [
+                {
+                    "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                     "value": "false"
+                }
+             ],
+            "linuxFxVersion": "DOCKER|nginx"
+        },
         "serverFarmId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourcegroups/', resourceGroup().id, '/providers/Microsoft.Web/serverfarms/', variables('linuxAppPlanName'))]",
         "hostingEnvironment": ""
       },
