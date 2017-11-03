@@ -64,7 +64,8 @@
       },
       "properties": {
         "name": "[variables('functionAppPlanName')]",
-        "numberOfWorkers": 1
+        "numberOfWorkers": 1,
+        "alwaysOn": true
       },
       "dependsOn": []
     },
