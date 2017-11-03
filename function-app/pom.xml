@@ -30,7 +30,7 @@
             <plugin>
                 <groupId>com.microsoft.azure</groupId>
                 <artifactId>azure-functions-maven-plugin</artifactId>
-                <version>0.1.4</version>
+                <version>0.1.6</version>
                 <configuration>
                     <resourceGroup>${env.COMMON_GROUP}</resourceGroup>
                     <appName>${env.FUNCTION_APP}</appName>
