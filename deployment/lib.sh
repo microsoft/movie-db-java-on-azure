@@ -652,8 +652,9 @@ function export_redis_details()
 function export_image_storage()
 {
   local resource_group=$1
-  storage_name=$(az storage account list -g ${resource_group} --query [1].name | tr -d '"')
+  storage_name=$(az storage account list -g ${resource_group} --query [2].name | tr -d '"')
   export STORAGE_CONNECTION_STRING=$(az storage account show-connection-string -g ${resource_group} -n ${storage_name} --query connectionString | tr -d '"')
+  export FUNCTION_APP=$(az functionapp list -g ${resource_group} --query [0].repositorySiteName | tr -d '"')
 }
 
 ##############################################################################

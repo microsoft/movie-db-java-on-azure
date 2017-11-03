@@ -18,9 +18,25 @@
   "variables": {
     "location": "[resourceGroup().location]",
     "storageVersion": "2015-06-15",
+    "appServiceApiVersion": "2015-08-01",
+    "functionStorageName": "[concat(uniqueString(resourceGroup().id), 'func')]",
+    "functionAppPlanName": "[concat(uniqueString(resourceGroup().id), '-func-app-plan')]",
+    "functionAppName": "[concat(uniqueString(resourceGroup().id), '-func-app')]",
     "imageStorageName": "[concat(uniqueString(resourceGroup().id), 'image')]"
   },
   "resources": [
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('functionStorageName')]",
+      "apiVersion": "[variables('storageVersion')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "accountType": "[parameters('storageType')]"
+      },
+      "tags": {
+        "displayName": "Function App Storage"
+      }
+    },
     {
       "type": "Microsoft.Storage/storageAccounts",
       "name": "[variables('imageStorageName')]",
@@ -31,6 +47,60 @@
       },
       "tags": {
         "displayName": "Image Storage"
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "name": "[variables('functionAppPlanName')]",
+      "kind": "app",
+      "apiVersion": "[variables('appServiceApiVersion')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "B1",
+        "tier": "Basic",
+        "size": "B1",
+        "family": "B",
+        "capacity": 1
+      },
+      "properties": {
+        "name": "[variables('functionAppPlanName')]",
+        "numberOfWorkers": 1
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('functionAppName')]",
+      "kind": "functionapp",
+      "apiVersion": "[variables('appServiceApiVersion')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "name": "[variables('functionAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('imageStorageName'))]",
+        "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]"
+      ],
+      "resources": [
+        {
+          "type": "config",
+          "name": "appsettings",
+          "apiVersion": "[variables('appServiceApiVersion')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('functionAppName'))]"
+          ],
+          "properties": {
+            "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), variables('storageVersion')).key1,';')]",
+            "AzureWebJobsDashboard": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('functionStorageName'),';AccountKey=',listkeys(resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName')), variables('storageVersion')).key1,';')]",
+            "FUNCTIONS_EXTENSION_VERSION": "beta",
+            "WEBSITE_NODE_DEFAULT_VERSION": "6.5.0"
+          }
+        }
+      ],
+      "tags": {
+        "displayName": "Function App"
       }
     }
   ],

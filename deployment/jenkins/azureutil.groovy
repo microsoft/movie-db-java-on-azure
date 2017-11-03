@@ -76,7 +76,7 @@ def deployWebApp(String resGroup, String dockerFilePath) {
         webapp_id=\$(az resource list -g ${resGroup} --resource-type Microsoft.Web/sites --query [0].id | tr -d '"')
 
         # Storage connection for images
-        storage_name=\$(az storage account list -g ${config.COMMON_GROUP} --query [1].name | tr -d '"')
+        storage_name=\$(az storage account list -g ${config.COMMON_GROUP} --query [2].name | tr -d '"')
         storage_conn_str=\$(az storage account show-connection-string -g ${config.COMMON_GROUP} -n \${storage_name} --query connectionString | tr -d '"')
 
         # Redis credentials
