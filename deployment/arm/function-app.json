@@ -64,8 +64,7 @@
       },
       "properties": {
         "name": "[variables('functionAppPlanName')]",
-        "numberOfWorkers": 1,
-        "alwaysOn": true
+        "numberOfWorkers": 1
       },
       "dependsOn": []
     },
@@ -77,7 +76,10 @@
       "location": "[variables('location')]",
       "properties": {
         "name": "[variables('functionAppName')]",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]"
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('functionAppPlanName'))]",
+        "siteConfig": {
+          "alwaysOn": true
+        }
       },
       "dependsOn": [
         "[resourceId('Microsoft.Storage/storageAccounts', variables('functionStorageName'))]",
