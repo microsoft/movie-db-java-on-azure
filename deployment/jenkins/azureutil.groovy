@@ -64,6 +64,13 @@ def prepareEnv(String targetEnv) {
 }
 
 def deployFunctionApp(String resGroup) {
+
+    sh """
+        export COMMON_GROUP=${resGroup}
+        export FUNCTION_APP=$(az functionapp list -g ${resource_group} --query [0].repositorySiteName | tr -d '"')
+        mvn clean package
+    """
+
     def appName = sh(
             script: "az functionapp list -g ${resGroup} --query [0].repositorySiteName | tr -d '\"'",
             returnStdout: true

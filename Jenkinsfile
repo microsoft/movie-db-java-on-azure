@@ -32,10 +32,9 @@ node {
   stage('Deploy') {
     // Deploy function app
     dir('function-app') {
-        sh("mvn clean package")
         azureUtil.deloyFunctionApp(azureUtil.config.EAST_US_GROUP)
     }
-    
+
     // Deploy data app
     withEnv(["ACR_NAME=${azureUtil.acrName}", "ACR_LOGIN_SERVER=${azureUtil.acrLoginServer}", "ACR_USERNAME=${azureUtil.acrUsername}", "ACR_PASSWORD=${azureUtil.acrPassword}"]) {
       azureUtil.deployDataApp(targetEnv, azureUtil.config.EAST_US_GROUP)
