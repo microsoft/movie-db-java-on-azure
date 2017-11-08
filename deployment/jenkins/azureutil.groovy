@@ -66,6 +66,7 @@ def prepareEnv(String targetEnv) {
 def deployFunctionApp() {
 
     sh """
+        export COMMON_GROUP=${config.COMMON_GROUP}
         mvn clean package
     """
 
