@@ -32,7 +32,7 @@ node {
   stage('Deploy') {
     // Deploy function app
     dir('function-app') {
-        azureUtil.deloyFunctionApp(azureUtil.config.EAST_US_GROUP)
+        azureUtil.deployFunctionApp()
     }
 
     // Deploy data app

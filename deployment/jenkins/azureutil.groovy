@@ -63,21 +63,20 @@ def prepareEnv(String targetEnv) {
     ).trim()
 }
 
-def deployFunctionApp(String resGroup) {
+def deployFunctionApp() {
 
     sh """
-        export COMMON_GROUP=\${resGroup}
-        export FUNCTION_APP=\$(az functionapp list -g ${resGroup} --query [0].repositorySiteName | tr -d '"')
+        export COMMON_GROUP=\${config.COMMON_GROUP}
+        export FUNCTION_APP=\$(az functionapp list -g ${config.COMMON_GROUP} --query [0].repositorySiteName | tr -d '"')
         mvn clean package
     """
 
     def appName = sh(
-            script: "az functionapp list -g ${resGroup} --query [0].repositorySiteName | tr -d '\"'",
+            script: "az functionapp list -g ${config.COMMON_GROUP} --query [0].repositorySiteName | tr -d '\"'",
             returnStdout: true
     ).trim()
 
-    def srcDir = 'target/azure-functions/' + appName
-    azureFunctionAppPublish azureCredentialsId: 'azure-sp', resourceGroup: resGroup, appName: appName, filePath: '**/*.jar,**/*.json', sourceDirectory: srcDir
+    azureFunctionAppPublish azureCredentialsId: 'azure-sp', resourceGroup: config.COMMON_GROUP, appName: appName, filePath: '**/*.jar,**/*.json', sourceDirectory: "target/azure-functions/${appName}"
 }
 
 def deployWebApp(String resGroup, String dockerFilePath) {
