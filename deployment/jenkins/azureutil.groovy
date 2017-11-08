@@ -65,7 +65,7 @@ def prepareEnv(String targetEnv) {
 
 def deployFunctionApp(String resGroup) {
     def appName = sh(
-            script: "az functionapp list -g ${resGroup} --query [0].repositorySiteName | tr -d '"'",
+            script: "az functionapp list -g ${resGroup} --query [0].repositorySiteName | tr -d '\"'",
             returnStdout: true
     ).trim()
 
