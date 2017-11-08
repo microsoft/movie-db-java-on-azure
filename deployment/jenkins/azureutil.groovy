@@ -63,6 +63,16 @@ def prepareEnv(String targetEnv) {
     ).trim()
 }
 
+def deployFunctionApp(String resGroup) {
+    def appName = sh(
+            script: "az functionapp list -g ${resGroup} --query [0].repositorySiteName | tr -d '"'",
+            returnStdout: true
+    ).trim()
+
+    def srcDir = 'target/azure-functions/' + appName
+    azureFunctionAppPublish azureCredentialsId: 'azure-sp', resourceGroup: resGroup, appName: appName, filePath: '**/*.jar,**/*.json', sourceDirectory: srcDir
+}
+
 def deployWebApp(String resGroup, String dockerFilePath) {
     def appName = sh(
             script: "az webapp list -g ${resGroup} --query [0].name | tr -d '\"'",
