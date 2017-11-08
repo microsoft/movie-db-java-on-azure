@@ -66,7 +66,6 @@ def prepareEnv(String targetEnv) {
 def deployFunctionApp() {
 
     sh """
-        export FUNCTION_APP=$(az functionapp list -g ${config.COMMON_GROUP} --query [0].repositorySiteName | tr -d '\"')
         mvn clean package
     """
 
