@@ -67,6 +67,7 @@ def deployFunctionApp() {
 
     sh """
         export COMMON_GROUP=${config.COMMON_GROUP}
+        export FUNCTION_APP=\$(az functionapp list -g ${config.COMMON_GROUP} --query [0].repositorySiteName | tr -d '"')
         mvn clean package
     """
 
