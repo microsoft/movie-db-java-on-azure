@@ -1,4 +1,4 @@
-FROM jenkins:2.60.3
+FROM jenkins/jenkins:lts
 
 USER root
 
@@ -35,4 +35,5 @@ RUN /usr/local/bin/install-plugins.sh \
     job-dsl \
     groovy \
     azure-app-service \
-    azure-acs
+    azure-acs \
+    azure-function
