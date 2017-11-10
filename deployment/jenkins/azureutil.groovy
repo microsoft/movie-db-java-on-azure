@@ -64,17 +64,16 @@ def prepareEnv(String targetEnv) {
 }
 
 def deployFunctionApp() {
-
-    sh """
-        export COMMON_GROUP=${config.COMMON_GROUP}
-        export FUNCTION_APP=\$(az functionapp list -g ${config.COMMON_GROUP} --query [0].repositorySiteName | tr -d '"')
-        mvn clean package
-    """
-
     def appName = sh(
             script: "az functionapp list -g ${config.COMMON_GROUP} --query [0].repositorySiteName | tr -d '\"'",
             returnStdout: true
     ).trim()
+
+    sh """
+        export COMMON_GROUP=${config.COMMON_GROUP}
+        export FUNCTION_APP=${appName}
+        mvn clean package
+    """
 
     azureFunctionAppPublish azureCredentialsId: 'azure-sp', resourceGroup: config.COMMON_GROUP, appName: appName, filePath: '**/*.jar,**/*.json', sourceDirectory: "target/azure-functions/${appName}"
 }
