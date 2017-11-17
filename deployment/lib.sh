@@ -491,13 +491,21 @@ function allow_acs_nsg_access()
   local resource_group=$2
 
   local nsgs=($(az network nsg list --resource-group "$resource_group" --query '[].name' --output tsv | grep -e "^k8s-master-"))
+  local port_range=22
+  if [ "$source_ip" = Internet ]; then
+    # web job deletes the rule if the port is set to 22 for wildcard internet access
+    port_range="21-23"
+  fi
   for nsg in "${nsgs[@]}"; do
     local name="allow_$source_ip"
     # used a fixed priority here
     local max_priority="$(az network nsg rule list -g "$resource_group" --nsg-name "$nsg" --query '[].priority' --output tsv | sort -n | tail -n1)"
-    local priority="$(expr "$max_priority" + 1)"
-    az network nsg rule create --priority "$priority" --destination-port-ranges 22 --resource-group "$resource_group" \
+    local priority="$(expr "$max_priority" + 50)"
+    log_info "Add allow $source_ip rules to NSG $nsg in resource group $resource_group, with priority $priority"
+    az network nsg rule create --priority "$priority" --destination-port-ranges "$port_range" --resource-group "$resource_group" \
         --nsg-name "$nsg" --name "$name" --source-address-prefixes "$source_ip"
+    #az network nsg rule create --priority "$priority" --destination-port-ranges 22 --resource-group "$resource_group" \
+    #    --nsg-name "$nsg" --name "$name" --source-address-prefixes "$source_ip"
   done
 }
 

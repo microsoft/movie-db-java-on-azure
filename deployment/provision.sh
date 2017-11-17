@@ -64,6 +64,12 @@ wait_till_kubernetes_created ${w_eu_group} ${ACS_NAME}
 wait_till_kubernetes_created ${jenkins_group} ${ACS_NAME}
 [[ $? -ne 0 ]] && return 1
 
+if [[ -n "$MS_CORP" ]]; then
+  allow_acs_nsg_access "Internet" "${e_us_group}"
+  allow_acs_nsg_access "Internet" "${w_eu_group}"
+  allow_acs_nsg_access "Internet" "${jenkins_group}"
+fi
+
 wait_till_deployment_created ${c_group} master
 [[ $? -ne 0 ]] && return 1
 
@@ -78,11 +84,11 @@ create_secrets_in_kubernetes ${w_eu_group} ${ACS_NAME}
 print_banner 'Deploy Jenkins cluster if not exist...'
 deploy_jenkins ${jenkins_group} ${ACS_NAME}
 if [[ -n "$JENKINS_IP_ADDRESS" ]]; then
-    allow_acs_nsg_access "$JENKINS_IP_ADDRESS" "$e_us_group"
-    allow_acs_nsg_access "$JENKINS_IP_ADDRESS" "$w_eu_group"
-    allow_acs_nsg_access "$JENKINS_IP_ADDRESS" "$jenkins_group"
+  allow_acs_nsg_access "$JENKINS_IP_ADDRESS" "$e_us_group"
+  allow_acs_nsg_access "$JENKINS_IP_ADDRESS" "$w_eu_group"
+  allow_acs_nsg_access "$JENKINS_IP_ADDRESS" "$jenkins_group"
 else
-    echo "WARNING: Jenkins IP address was not found!"
+  echo "WARNING: Jenkins IP address was not found!"
 fi
 
 # Set up environment variables for local dev environment
