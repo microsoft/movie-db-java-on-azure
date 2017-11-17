@@ -77,6 +77,13 @@ create_secrets_in_kubernetes ${w_eu_group} ${ACS_NAME}
 
 print_banner 'Deploy Jenkins cluster if not exist...'
 deploy_jenkins ${jenkins_group} ${ACS_NAME}
+if [[ -n "$JENKINS_IP_ADDRESS" ]]; then
+    allow_acs_nsg_access "$JENKINS_IP_ADDRESS" "$e_us_group"
+    allow_acs_nsg_access "$JENKINS_IP_ADDRESS" "$w_eu_group"
+    allow_acs_nsg_access "$JENKINS_IP_ADDRESS" "$jenkins_group"
+else
+    echo "WARNING: Jenkins IP address was not found!"
+fi
 
 # Set up environment variables for local dev environment
 source dev_setup.sh "$@"

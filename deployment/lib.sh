@@ -475,6 +475,33 @@ function deploy_jenkins()
 }
 
 ##############################################################################
+# Add network security group rule to allow the given IP to access the ACS
+# master SSH service.
+# Globals:
+#   None
+# Arguments:
+#   source_ip
+#   resource_group
+# Returns:
+#   None
+##############################################################################
+function allow_acs_nsg_access()
+{
+  local source_ip=$1
+  local resource_group=$2
+
+  local nsgs=($(az network nsg list --resource-group "$resource_group" --query '[].name' --output tsv | grep -e "^k8s-master-"))
+  for nsg in "${nsgs[@]}"; do
+    local name="allow_$source_ip"
+    # used a fixed priority here
+    local max_priority="$(az network nsg rule list -g "$resource_group" --nsg-name "$nsg" --query '[].priority' --output tsv | sort -n | tail -n1)"
+    local priority="$(expr "$max_priority" + 1)"
+    az network nsg rule create --priority "$priority" --destination-port-ranges 22 --resource-group "$resource_group" \
+        --nsg-name "$nsg" --name "$name" --source-address-prefixes "$source_ip"
+  done
+}
+
+##############################################################################
 # Create secrets in Kubernetes for Jenkins
 # Globals:
 #   None
@@ -531,6 +558,7 @@ function check_jenkins_readiness()
   do
     jenkins_ip=$(kubectl get svc -o jsonpath={.items[*].status.loadBalancer.ingress[0].ip})
     if [ -n "${jenkins_ip}" ]; then
+      export JENKINS_IP_ADDRESS="$jenkins_ip"
       break;
     fi
     sleep 5
