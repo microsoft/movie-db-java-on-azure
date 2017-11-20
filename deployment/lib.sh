@@ -566,7 +566,6 @@ function check_jenkins_readiness()
   do
     jenkins_ip=$(kubectl get svc -o jsonpath={.items[*].status.loadBalancer.ingress[0].ip})
     if [ -n "${jenkins_ip}" ]; then
-      export JENKINS_IP_ADDRESS="$jenkins_ip"
       break;
     fi
     sleep 5
