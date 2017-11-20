@@ -64,6 +64,17 @@ wait_till_kubernetes_created ${w_eu_group} ${ACS_NAME}
 wait_till_kubernetes_created ${jenkins_group} ${ACS_NAME}
 [[ $? -ne 0 ]] && return 1
 
+if [[ -n "$MS_CORP" ]]; then
+  # For MS developers, all the VM provisioned will be applied with NSG rules to allow
+  # access only from internal CORP network. This will block the access between the
+  # VMs provisioned for the project, so Jenkins slaves will not be able to access
+  # the ACS master node through SSH port.
+  # This is a fix to this problem.
+  allow_acs_nsg_access "Internet" "${e_us_group}"
+  allow_acs_nsg_access "Internet" "${w_eu_group}"
+  allow_acs_nsg_access "Internet" "${jenkins_group}"
+fi
+
 wait_till_deployment_created ${c_group} master
 [[ $? -ne 0 ]] && return 1
 
