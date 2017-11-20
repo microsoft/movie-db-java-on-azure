@@ -93,6 +93,16 @@ In this basic layout, the following design decisions have been implemented:
 
    **NOTE**: You can use either a subscription name or id when specifying which subscription to use; to obtain a list of your subscriptions, type `az account list`.
 
+1. **For Microsoft developers**, we have network security group rules applied to the resources
+   in the development subscriptions which restrict the network access from the internal CORP network. 
+   This blocks the SSH communications between the VM's provisioned in this project.
+
+   To workaround this, set the environment variable `MS_CORP` before you start the provision process:
+
+   ```shell
+   export MS_CORP=1
+   ```
+
 1. Build an initial layout on Azure using an ARM template from using one of the following methods:
 
    ```shell
