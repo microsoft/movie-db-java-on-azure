@@ -129,8 +129,18 @@ def deployDataApp(String targetEnv, String resGroup) {
         export DATA_APP_CONTAINER_PORT=${config.DATA_APP_CONTAINER_PORT}
         export TARGET_ENV=${targetEnv}
         cd data-app
-        mvn clean fabric8:resource fabric8:apply
+        mvn clean fabric8:resource
+
+        cat target/fabric8/namespace.yml
+        cat target/fabric8/secrets.yml
+        cat target/fabric8/deployment.yml
+        cat target/fabric8/service.yml
+
+        # Jenkins plugin doesn't support apply namespace
+        kubectl apply -f target/fabric8/namespace.yml
     """
+
+    acsDeploy azureCredentialsId: 'azure-sp', configFilePaths: 'data-app/target/fabric8/deployment.yml,data-app/target/fabric8/service.yml', containerService: 'acs | Kubernetes', enableConfigSubstitution: true, resourceGroupName: resGroup, sshCredentialsId: 'acs-ssh'
 
     sh """
         # Check whether there is any redundant IP address
