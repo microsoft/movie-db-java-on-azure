@@ -164,4 +164,16 @@ public class Movie implements Serializable {
         builder.append("}");
         return builder.toString();
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        if (getClass() != o.getClass())
+            return false;
+        Movie movie = (Movie) o;
+        return this.id==movie.getId();
+    }
 }
