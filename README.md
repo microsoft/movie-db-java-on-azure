@@ -1,6 +1,6 @@
 # Movie Database App using Java on Azure #
 
-The purpose of this sample application is to illustrate a modern Java app in the cloud; the result of this project will be to create a movie database simliar to IMDB.
+The purpose of this sample application is to illustrate a modern Java app in the cloud; the result of this project will be to create a movie database similar to IMDB.
 
 ## Requirements ##
 
